@@ -156,6 +156,7 @@ weka.classifiers.Classifier=\
  weka.classifiers.lazy.KStar,\
  weka.classifiers.lazy.LBR,\
  weka.classifiers.lazy.LWL,\
+ weka.classifiers.rules.OlexGA,\
  weka.classifiers.meta.AdaBoostM1,\
  weka.classifiers.meta.AdditiveRegression,\
  weka.classifiers.meta.AttributeSelectedClassifier,\
