@@ -1,0 +1,25 @@
+/ClassifierBinaryXOverWithMutation.java/1.1/Thu Jun 16 10:52:49 2011//
+/ClassifierFitness.java/1.1/Thu Jun 16 10:52:49 2011//
+/ClassifierFitnessEvaluator.java/1.1/Thu Jun 16 10:52:49 2011//
+/ClassifierIndividual.java/1.1/Thu Jun 16 10:52:49 2011//
+/ClassifierIndividualFactory.java/1.1/Thu Jun 16 10:52:49 2011//
+/ClassifierSimpleBinaryMutation.java/1.1/Thu Jun 16 10:52:49 2011//
+/ClassifierSimpleBinaryXOver.java/1.1/Thu Jun 16 10:52:49 2011//
+/ClassifierTwoPointXOver.java/1.1/Thu Jun 16 10:52:49 2011//
+/ClassifierTwoPointXOverWithMutation.java/1.1/Thu Jun 16 10:52:49 2011//
+/ClassifierUniformXOver.java/1.1/Thu Jun 16 10:52:49 2011//
+/ClassifierUniformXOverWithMutation.java/1.1/Thu Jun 16 10:52:49 2011//
+/GAInitPopulationAlgoTypes.java/1.1/Thu Jun 16 10:52:49 2011//
+/GARepAlgoTypes.java/1.1/Thu Jun 16 10:52:49 2011//
+/GASelectionAlgoTypes.java/1.1/Thu Jun 16 10:52:49 2011//
+/LearnerElitistGA.java/1.1/Thu Jun 16 10:52:49 2011//
+/LearnerGA.java/1.1/Thu Jun 16 10:52:49 2011//
+/LearnerGAMainClass.java/1.1/Thu Jun 16 10:52:49 2011//
+/LearnerParameterSet.java/1.1/Thu Jun 16 10:52:49 2011//
+/ReducedClassifierFitnessEvaluator.java/1.1/Thu Jun 16 10:52:49 2011//
+/ReducedClassifierIndividual.java/1.1/Thu Jun 16 10:52:49 2011//
+/ReducedClassifierIndividualFactory.java/1.1/Thu Jun 16 10:52:49 2011//
+/ReducedLearnerGAMainClass.java/1.1/Thu Jun 16 10:52:49 2011//
+D/drivenInitialization////
+D/masterAlgorithm////
+D/utils////
