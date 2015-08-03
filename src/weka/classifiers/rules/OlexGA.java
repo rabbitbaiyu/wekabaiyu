@@ -520,6 +520,8 @@ public class OlexGA extends Classifier implements OptionHandler, AdditionalMeasu
 	public String generationsTipText() {
 		return "Number of times the process of going from the current population to the next on is executed.";
 	}
+	
+	/*  hello*/
 
 	public String attemptsTipText() {
 		return "Number of times the genetic algorithm is executed.";
