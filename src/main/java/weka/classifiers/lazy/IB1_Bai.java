@@ -21,6 +21,7 @@ import weka.core.Instance;
 import weka.core.Instances;
 import weka.core.TechnicalInformation;
 import weka.core.TechnicalInformationHandler;
+import weka.core.Utils;
 //import knn.entrytester.ValueComparator;
 import weka.core.Capabilities.Capability;
 import weka.core.TechnicalInformation.Field;
@@ -339,7 +340,7 @@ implements UpdateableClassifier, TechnicalInformationHandler{
 			  }*/
 			} else {
 			  //diff = norm(first.value(i), i) - norm(second.value(i), i);
-				diff = first.value(i)-second.value(i);
+				 diff = norm(first.value(i), i) - norm(second.value(i), i);
 				//diff = java.lang.Math.pow(diffsqa,2);
 			}
 			distance += diff * diff;
@@ -359,6 +360,16 @@ implements UpdateableClassifier, TechnicalInformationHandler{
 		      + "used.\n\n"
 		      + "For more information, see \n\n"
 		      + getTechnicalInformation().toString();
+		  }
+	  
+	  private double norm(double x,int i) {
+
+		    if (Double.isNaN(m_MinArray[i])
+			|| Utils.eq(m_MaxArray[i], m_MinArray[i])) {
+		      return 0;
+		    } else {
+		      return (x - m_MinArray[i]) / (m_MaxArray[i] - m_MinArray[i]);
+		    }
 		  }
 	  
 	  
