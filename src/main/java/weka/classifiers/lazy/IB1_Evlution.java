@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Map.Entry;
 import java.util.Scanner;
 
@@ -51,9 +52,22 @@ public class IB1_Evlution extends Classifier implements UpdateableClassifier, Te
 
 	/** The maximum values for numeric attributes. */
 	// public Instances[] ClassInstances;
+	
 	private double[][] class_min_Array;
 
 	private double[][] class_max_Array;
+	/** split the instances by the class value. */
+	private Instances[] splitData;
+	/** the instancevector by class label to get the best instance */
+
+	private Instancevector insvec;
+	
+	/**  Population number */
+	private int N=30;
+	
+	private  Instancevector [] population;
+
+	Random random = new Random();
 
 	/**
 	 * @param args
@@ -62,12 +76,16 @@ public class IB1_Evlution extends Classifier implements UpdateableClassifier, Te
 
 	public static void main(String[] argv) throws Exception {
 
-		String filepath = "/Users/rabbitbaiyu/git/wekabaiyu/src/main/java/data/diabetes2.arff";
+		String filepath = "C:/Users/baiyu/Desktop/weka-src/src/main/java/data/diabetes2.arff";
+		//String filepath = "/data/diabetes2.arff";
 
 		IB1_Evlution ibev = new IB1_Evlution();
 		Instances ins = ibev.getinstance(filepath);
 		ins.setClassIndex(ins.numAttributes() - 1);
 		ibev.buildClassifier(ins);
+		// ibev.printinstancebyclass();
+		ibev.randominstance();
+		ibev.printinstancerandom();
 		// System.out.println(ibev.getinstance(filepath));
 
 		// ibev.test();
@@ -103,43 +121,6 @@ public class IB1_Evlution extends Classifier implements UpdateableClassifier, Te
 		return serialVersionUID;
 	}
 
-	/*
-	 * public void test() throws Exception {
-	 * 
-	 * String filepath =
-	 * "/Users/rabbitbaiyu/git/wekabaiyu/src/main/java/data/breast-cancer.arff";
-	 * // IB1_Evlution ibev = new IB1_Evlution(); m_Train =
-	 * getinstance(filepath); int numattribute = m_Train.numAttributes();
-	 * System.out.println(m_Train.numAttributes());
-	 * m_Train.setClassIndex(numattribute - 1);
-	 * System.out.println(m_Train.numAttributes()); // int numattribute =
-	 * m_Train.numAttributes(); int numdclass = m_Train.numClasses();
-	 * System.out.println("number of class is" + numdclass);
-	 * 
-	 * Instances[] splitData = new Instances[numdclass]; for (int j = 0; j <
-	 * numdclass; j++) { splitData[j] = new Instances(m_Train,
-	 * m_Train.numInstances()); }
-	 * 
-	 * // ClassInstances = new Instances[numdclass];
-	 * 
-	 * System.out.println("-----------");
-	 * System.out.println(splitData[0]+"instance0");
-	 * System.out.println("-----------");
-	 * 
-	 * Enumeration enu = m_Train.enumerateInstances(); while
-	 * (enu.hasMoreElements()) { Instance in = (Instance) enu.nextElement(); //
-	 * System.out.println(in + "*****"); splitData[(int)
-	 * in.classValue()].add(in); // splitData[0].add(in); }
-	 * 
-	 * for (int j = 0; j < numdclass; j++) { System.out.println(splitData[j]); }
-	 * 
-	 * 
-	 * System.out.println("-----------"); System.out.println(splitData[0]);
-	 * System.out.println("------------"); System.out.println(splitData[1]);
-	 * 
-	 * 
-	 * }
-	 */
 	public void min_max_init() {
 
 		System.out.println("number of attributtes  " + m_Train.numAttributes());
@@ -148,13 +129,14 @@ public class IB1_Evlution extends Classifier implements UpdateableClassifier, Te
 		System.out.println("min_max_init");
 		while (emuattri.hasMoreElements()) {
 			Attribute attri = (Attribute) emuattri.nextElement();
-			System.out.println(attri.name());
+			System.out.print(attri.name() + "\t");
 			// System.out.println(in + "*****");
 			// splitData[(int) in.classValue()].add(in);
 			// splitData[0].add(in);
 		}
+		System.out.println();
 
-		System.out.println("min_max_init");
+		// System.out.println("min_max_init");
 		m_MinArray = new double[m_Train.numAttributes()];
 		m_MaxArray = new double[m_Train.numAttributes()];
 		for (int i = 0; i < m_Train.numAttributes(); i++) {
@@ -188,11 +170,13 @@ public class IB1_Evlution extends Classifier implements UpdateableClassifier, Te
 		System.out.println("number of attibutes is " + m_Train.numAttributes());
 		// int numattribute = m_Train.numAttributes();
 		int numdclass = m_Train.numClasses();
+		insvec = new Instancevector(numdclass);
+		population = new Instancevector[N];
 		class_min_Array = new double[numdclass][2];
 		class_max_Array = new double[numdclass][2];
 		System.out.println("number of class is" + numdclass);
 
-		Instances[] splitData = new Instances[numdclass];
+		splitData = new Instances[numdclass];
 		for (int j = 0; j < numdclass; j++) {
 			splitData[j] = new Instances(m_Train, m_Train.numInstances());
 		}
@@ -232,11 +216,19 @@ public class IB1_Evlution extends Classifier implements UpdateableClassifier, Te
 		 * enu1.nextElement()); //System.out.println("#######"); }
 		 */
 
-		// System.out.println(m_MinArray);
+		System.out.println("------------------------min_array----------------------------");
+		print_array(class_min_Array);
+		System.out.println("------------------------max_array----------------------------");
+		print_array(class_max_Array);
 
+		// TODO Auto-generated method stub
+
+	}
+
+	public void print_array(double[][] class_min_Array) {
 		for (int j = 0; j < class_min_Array.length; j++) {
 
-			for (int k = 0; k < instances.numAttributes() - 1; k++) {
+			for (int k = 0; k < m_Train.numAttributes() - 1; k++) {
 
 				System.out.print(class_min_Array[j][k] + "\t");
 			}
@@ -244,8 +236,6 @@ public class IB1_Evlution extends Classifier implements UpdateableClassifier, Te
 			System.out.println();
 
 		}
-
-		// TODO Auto-generated method stub
 
 	}
 
@@ -404,4 +394,59 @@ public class IB1_Evlution extends Classifier implements UpdateableClassifier, Te
 		}
 	}
 
+	private void randominstance() {
+
+		for (int j = 0; j < m_Train.numClasses(); j++) {
+			Instances ins = splitData[j];
+			int inSelectNumOne = random.nextInt(ins.numInstances());// 闅忔満閫夋嫨绗竴涓牱渚嬬储寮�
+																	// int
+																	// inSelectNumTwo
+																	// =
+																	// random.nextInt(instances.numInstances());
+			Instance instanceSelectOne = ins.instance(inSelectNumOne);
+			insvec.getInsv()[j] = instanceSelectOne;
+			System.out.println("***********************");
+			System.out.println(instanceSelectOne);
+			System.out.println("***********************");
+
+		}
+
+	}
+
+	private void printinstancebyclass() {
+		for (int j = 0; j < m_Train.numClasses(); j++) {
+			// System.out.println("@@@@@@@@@@@@@@@@@@@");
+			System.out.println(splitData[j]);
+			// System.out.println("@@@@@@@@@@@@@@@@@@@");
+		}
+
+	}
+
+	private void printinstancerandom() {
+		for (int j = 0; j < m_Train.numClasses(); j++) {
+			System.out.println("-----------------------------");
+			System.out.println(insvec.getInsv()[j]);
+			// System.out.println("@@@@@@@@@@@@@@@@@@@");
+		}
+
+	}
+
 }
+
+class Instancevector {
+	// private int num;
+	private Instance[] insv;
+
+	Instancevector(int number) {
+		insv = new Instance[number];
+	}
+
+	public Instance[] getInsv() {
+		return insv;
+	}
+
+	public void setInsv(Instance[] insv) {
+		this.insv = insv;
+	}
+
+};
