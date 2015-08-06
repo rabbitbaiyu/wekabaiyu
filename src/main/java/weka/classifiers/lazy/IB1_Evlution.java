@@ -499,7 +499,7 @@ public class IB1_Evlution extends Classifier implements UpdateableClassifier, Te
 				//System.out.println(insarray[j]);
 				Instance ins = new Instance(insarray[j]);
 				System.out.println("k =="+k+"  "+"j == "+j);
-				System.out.println("ins =="+ins);
+				System.out.println("insn =="+ins);
 				System.out.println("inst =="+inst);				
 				System.out.println("inst =="+inst);
 				distance = distance(ins,inst);
