@@ -89,6 +89,9 @@ public class IB1_Evlution extends Classifier implements UpdateableClassifier, Te
 		ibev.randominstance();
 		// ibev.printinstancerandom();
 		ibev.printpopulation();
+		ibev.caculatedistance();
+		//System.out.println("number of attributtes  ");
+
 
 	}
 
@@ -164,6 +167,16 @@ public class IB1_Evlution extends Classifier implements UpdateableClassifier, Te
 		instances.deleteWithMissingClass();
 
 		m_Train = new Instances(instances, 0, instances.numInstances());
+		
+	    m_MinArray = new double [m_Train.numAttributes()];
+	    m_MaxArray = new double [m_Train.numAttributes()];
+	    for (int i = 0; i < m_Train.numAttributes(); i++) {
+	      m_MinArray[i] = m_MaxArray[i] = Double.NaN;
+	    }
+	    Enumeration enu = m_Train.enumerateInstances();
+	    while (enu.hasMoreElements()) {
+	      updateMinMax((Instance) enu.nextElement());
+	    }
 
 		// m_Train.setClassIndex(m_Train.numAttributes() - 1);
 		System.out.println("number of attibutes is " + m_Train.numAttributes());
@@ -180,10 +193,10 @@ public class IB1_Evlution extends Classifier implements UpdateableClassifier, Te
 			splitData[j] = new Instances(m_Train, m_Train.numInstances());
 		}
 
-		Enumeration enu = m_Train.enumerateInstances();
+		Enumeration enu1 = m_Train.enumerateInstances();
 
-		while (enu.hasMoreElements()) {
-			Instance in = (Instance) enu.nextElement();
+		while (enu1.hasMoreElements()) {
+			Instance in = (Instance) enu1.nextElement();
 			// System.out.println(in + "*****");
 			splitData[(int) in.classValue()].add(in);
 			// splitData[0].add(in);
@@ -194,9 +207,10 @@ public class IB1_Evlution extends Classifier implements UpdateableClassifier, Te
 			System.out.println("_______________________________________________");
 		}
 
-		min_max_init();
+		//min_max_init();
+		
 		// System.out.println("#######");
-		for (int j = 0; j < numdclass; j++) {
+/*		for (int j = 0; j < numdclass; j++) {
 			System.out.println(splitData[j]);
 			System.out.println("_______________________________________________");
 			Enumeration enuinstances = splitData[j].enumerateInstances();
@@ -207,18 +221,13 @@ public class IB1_Evlution extends Classifier implements UpdateableClassifier, Te
 			class_min_Array[j] = getM_MinArray();
 			class_max_Array[j] = getM_MaxArray();
 			min_max_init();
-		}
+		}*/
 
-		/*
-		 * Enumeration enu1 = m_Train.enumerateInstances(); while
-		 * (enu1.hasMoreElements()) { updateMinMax((Instance)
-		 * enu1.nextElement()); //System.out.println("#######"); }
-		 */
 
-		System.out.println("------------------------min_array----------------------------");
+		/*System.out.println("------------------------min_array----------------------------");
 		print_array(class_min_Array);
 		System.out.println("------------------------max_array----------------------------");
-		print_array(class_max_Array);
+		print_array(class_max_Array);*/
 
 		// TODO Auto-generated method stub
 
@@ -336,45 +345,50 @@ public class IB1_Evlution extends Classifier implements UpdateableClassifier, Te
 
 		return classValue;
 	}
-
+	
+	
 	private double distance(Instance first, Instance second) {
+	    
+	    double diff, distance = 0;
 
-		double diff = 0, diffsqa, distance = 0;
+	    for(int i = 0; i < m_Train.numAttributes(); i++) { 
+	      if (i == m_Train.classIndex()) {
+		continue;
+	      }
+	      if (m_Train.attribute(i).isNominal()) {
 
-		for (int i = 0; i < m_Train.numAttributes(); i++) {
-			if (i == m_Train.classIndex()) {
-				continue;
-			}
-			if (m_Train.attribute(i).isNominal()) {
-
-				// If attribute is nominal
-				if (first.isMissing(i) || second.isMissing(i) || ((int) first.value(i) != (int) second.value(i))) {
-					distance += 1;
-				}
-			} else {
-
-				// If attribute is numeric
-				if (first.isMissing(i) || second.isMissing(i)) {
-					/*
-					 * if (first.isMissing(i) && second.isMissing(i)) { diff =
-					 * 1; } else { if (second.isMissing(i)) { diff =
-					 * norm(first.value(i), i); } else { diff =
-					 * norm(second.value(i), i); } if (diff < 0.5) { diff = 1.0
-					 * - diff; } }
-					 */
-				} else {
-					// diff = norm(first.value(i), i) - norm(second.value(i),
-					// i);
-					diff = norm(first.value(i), i) - norm(second.value(i), i);
-					// diff = java.lang.Math.pow(diffsqa,2);
-				}
-				distance += diff * diff;
-			}
+		// If attribute is nominal
+		if (first.isMissing(i) || second.isMissing(i) ||
+		    ((int)first.value(i) != (int)second.value(i))) {
+		  distance += 1;
 		}
+	      } else {
+		
+		// If attribute is numeric
+		if (first.isMissing(i) || second.isMissing(i)){
+		  if (first.isMissing(i) && second.isMissing(i)) {
+		    diff = 1;
+		  } else {
+		    if (second.isMissing(i)) {
+		      diff = norm(first.value(i), i);
+		    } else {
+		      diff = norm(second.value(i), i);
+		    }
+		    if (diff < 0.5) {
+		      diff = 1.0 - diff;
+		    }
+		  }
+		} else {
+		  diff = norm(first.value(i), i) - norm(second.value(i), i);
+		}
+		distance += diff * diff;
+	      }
+	    }
+	    
+	    return distance;
+	  }
 
-		return distance;
-	}
-
+	
 	public String globalInfo() {
 
 		return "Nearest-neighbour classifier. Uses normalized Euclidean distance to "
@@ -458,6 +472,61 @@ public class IB1_Evlution extends Classifier implements UpdateableClassifier, Te
 		}
 
 	}
+	
+	private void caculatedistance(){
+		int [] classlebel = new int[m_Train.numInstances()];
+		int [] classlebelN = new int[N];
+		double [] distancearray = new double[N];
+		double minDistance = Double.MAX_VALUE;
+		double distance;
+		int index = -1;
+		Instance inst = m_Train.firstInstance();
+		for(int l =0;l<getM_MinArray().length;l++){
+			System.out.println(getM_MinArray()[l]);
+
+		}
+		System.out.println("------------------------max_array----------------------------");
+
+		for(int l =0;l<getM_MaxArray().length;l++){
+			System.out.println(getM_MaxArray()[l]);
+
+		}
+		for (int k = 0; k < N; k++) {
+			System.out.println("-----------------------------");
+			Instancevector insvec = population[k];
+			Instance[] insarray = insvec.getInsv();
+			for (int j = 0; j < m_Train.numClasses(); j++) {
+				//System.out.println(insarray[j]);
+				Instance ins = new Instance(insarray[j]);
+				System.out.println("k =="+k+"  "+"j == "+j);
+				System.out.println("ins =="+ins);
+				System.out.println("inst =="+inst);				
+				System.out.println("inst =="+inst);
+				distance = distance(ins,inst);
+				System.out.println("distance =="+distance);
+				if(distance<minDistance){
+					minDistance = distance;
+					index = j;					
+				}
+				System.out.println("mindistance =="+minDistance);
+				System.out.println("index =="+index);
+			}
+			
+			classlebel[k]=index;
+			distancearray[k]=minDistance;
+			
+			
+		}
+		for(int k =0;k<N;k++){
+			System.out.print(classlebel[k]+"\t");
+		}
+		System.out.println();
+		for(int k =0;k<N;k++){
+			System.out.print(distancearray[k]+"\t");
+		}
+		
+
+	}
 
 	private void printinstancerandom() {
 		for (int j = 0; j < m_Train.numClasses(); j++) {
@@ -486,4 +555,4 @@ class Instancevector {
 		this.insv = insv;
 	}
 
-};
+}
