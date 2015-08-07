@@ -76,7 +76,7 @@ public class IB1_Evlution extends Classifier implements UpdateableClassifier, Te
 
 	public static void main(String[] argv) throws Exception {
 
-		String filepath = "C:/Users/baiyu/Desktop/weka-src/src/main/java/data/diabetes2.arff";
+		String filepath = "C:/Users/baiyu/Desktop/weka-src/src/main/java/data/diabetes.arff";
 		// String filepath =
 		// "/Users/rabbitbaiyu/git/wekabaiyu/src/main/java/data/diabetes2.arff";
 		// String filepath = "/data/diabetes2.arff";
@@ -539,8 +539,8 @@ public class IB1_Evlution extends Classifier implements UpdateableClassifier, Te
 
 	private void caculate() {
 
-		double[] distancearray = new double[m_Train.numInstances()];
-		int[] classlebel = new int[m_Train.numInstances()];
+		double[] distancearray = new double [m_Train.numInstances()];
+		double[] classlebel =    new double [m_Train.numInstances()];
 		double minDistance = Double.MAX_VALUE;
 		double distance;
 		int index = -1;
@@ -582,8 +582,27 @@ public class IB1_Evlution extends Classifier implements UpdateableClassifier, Te
 		for (int k = 0; k < m_Train.numInstances(); k++) {
 			System.out.print(distancearray[k] + "\t");
 		}
-
+		System.out.println();
+		
+		double right = 0;
+	    double wrong = 0;
+		for (int k = 0; k < m_Train.numInstances(); k++) {
+			Instance inst = m_Train.instance(k);
+			System.out.println(inst.classValue());
+			System.out.println(classlebel[k]);
+			if(inst.classValue()==classlebel[k]){
+				right++;			
+			}
+			else{
+				wrong++;
+			}
+		}
+		
+		double percent = right/(right+wrong);
+		System.out.println("double =="+percent);
+		
 	}
+	
 
 }
 
