@@ -76,9 +76,8 @@ public class IB1_Evlution extends Classifier implements UpdateableClassifier, Te
 
 	public static void main(String[] argv) throws Exception {
 
-		// String filepath =
-		// "C:/Users/baiyu/Desktop/weka-src/src/main/java/data/diabetes2.arff";
-		String filepath = "/Users/rabbitbaiyu/git/wekabaiyu/src/main/java/data/diabetes2.arff";
+		String filepath ="C:/Users/baiyu/Desktop/weka-src/src/main/java/data/diabetes2.arff";
+		//String filepath = "/Users/rabbitbaiyu/git/wekabaiyu/src/main/java/data/diabetes2.arff";
 		// String filepath = "/data/diabetes2.arff";
 
 		IB1_Evlution ibev = new IB1_Evlution();
@@ -89,6 +88,8 @@ public class IB1_Evlution extends Classifier implements UpdateableClassifier, Te
 		ibev.randominstance();
 		// ibev.printinstancerandom();
 		ibev.printpopulation();
+		
+		//System.out.println("yubai...");
 
 	}
 
@@ -466,6 +467,10 @@ public class IB1_Evlution extends Classifier implements UpdateableClassifier, Te
 			// System.out.println("@@@@@@@@@@@@@@@@@@@");
 		}
 
+	}
+	
+	private void caculatedistance(){
+		Instance ins = m_Train.instance(0);
 	}
 
 }

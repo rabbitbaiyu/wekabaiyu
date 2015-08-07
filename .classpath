@@ -6,7 +6,5 @@
 	<classpathentry kind="lib" path="lib/JFlex.jar"/>
 	<classpathentry kind="lib" path="lib/junit.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="/Users/rabbitbaiyu/Downloads/WekaOlexGA-source/WekaOlexGAText/lib/weka.jar"/>
-	<classpathentry kind="lib" path="/Users/rabbitbaiyu/Downloads/WekaOlexGA-source/WekaOlexGAText/lib/jaga.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
