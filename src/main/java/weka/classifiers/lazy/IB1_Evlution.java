@@ -63,11 +63,13 @@ public class IB1_Evlution extends Classifier implements UpdateableClassifier, Te
 	private Instancevector insvec;
 
 	/** Population number */
-	private int N = 3;
+	private int N = 2;
 	private Instancevector bestinsvec;
 	private Instancevector[] population;
 	private double[] fittness;
-	int label = -1;
+	int bestlabel;
+	double bestpercentage;
+	double randomfactor;
 	
 	private int Maxgen = 10;
 
@@ -75,20 +77,16 @@ public class IB1_Evlution extends Classifier implements UpdateableClassifier, Te
 
 	/**
 	 * @param args
-	 * @throws Exception
+	 * @throws Exceptionb
 	 */
 
 	public static void main(String[] argv) throws Exception {
 
-		String filepath = "C:/Users/baiyu/Desktop/weka-src/src/main/java/data/diabetes2.arff";
+		String filepath = "C:/Users/baiyu/Desktop/weka-src/src/main/java/data/diabetes.arff";
 		//String filepath = "/Users/rabbitbaiyu/git/wekabaiyu/src/main/java/data/diabetes.arff";
-		
-
 		IB1_Evlution ibev = new IB1_Evlution();
 		Instances ins = ibev.getinstance(filepath);
-		ins.setClassIndex(ins.numAttributes() - 1);
-
-		
+		ins.setClassIndex(ins.numAttributes() - 1);		
 		ibev.buildClassifier(ins);
 		// ibev.printinstancebyclass();
 		//ibev.randominstance();
@@ -106,7 +104,6 @@ public class IB1_Evlution extends Classifier implements UpdateableClassifier, Te
 	private void caculate_fittness() {
 		double percentage;
 		fittness = new double[N];
-		double bestpercentage = -1;
 		for (int i = 0; i < N; i++) {
 			percentage = caculate(population[i]);
 			fittness[i] = percentage;
@@ -124,21 +121,21 @@ public class IB1_Evlution extends Classifier implements UpdateableClassifier, Te
 	
 	
 	
-	private Instancevector  instancevectoradd(Instancevector first,Instancevector second){
+	private Instancevector  instancevectoradd(Instancevector first,Instancevector second,double factor){
 		
 		Instancevector result = new Instancevector(m_Train.numClasses());
 		for(int i =0;i<m_Train.numClasses();i++){
-			result.getInsv()[i] = instanceadd(first.getInsv()[i],second.getInsv()[i]);
+			result.getInsv()[i] = instanceadd(first.getInsv()[i],second.getInsv()[i],factor);
 		}
 			
 		return result;
 	}
 	
-	private Instancevector  instancevectorsub(Instancevector first,Instancevector second){
+	private Instancevector  instancevectorsub(Instancevector first,Instancevector second,double factor){
 		
 		Instancevector result = new Instancevector(m_Train.numClasses());
 		for(int i =0;i<m_Train.numClasses();i++){
-			result.getInsv()[i] = instancesub(first.getInsv()[i],second.getInsv()[i]);
+			result.getInsv()[i] = instancesub(first.getInsv()[i],second.getInsv()[i],factor);
 		}
 			
 		return result;
@@ -146,19 +143,20 @@ public class IB1_Evlution extends Classifier implements UpdateableClassifier, Te
 	
 	
 	private int choose_the_best(){
-		int bestlabel = -1;
-		double bestpercentage = -1;
+		
+		bestpercentage = -1;
+		bestlabel = -1;
 		for (int i = 0; i < N; i++) {
 			
 			if (fittness[i] > bestpercentage) {
 				bestpercentage = fittness[i];
 				bestlabel = i;
 			}
-			System.out.println("fittness	"+i+"\t" + fittness[i]);
-			System.out.println("bestpercentage " + bestpercentage);
+			//System.out.println("fittness	"+i+"\t" + fittness[i]);
+			//System.out.println("bestpercentage " + bestpercentage);
 		}
-		System.out.println("bestpercentage	" + bestpercentage);
-		System.out.println("bestlabel	" + bestlabel);
+		System.out.println("-------------bestpercentage--------------" + bestpercentage);
+		//System.out.println("bestlabel	" + bestlabel);
 
 		return bestlabel;
 		
@@ -299,10 +297,12 @@ public class IB1_Evlution extends Classifier implements UpdateableClassifier, Te
 		instances.deleteWithMissingClass();
 
 		m_Train = new Instances(instances, 0, instances.numInstances());
+		//System.out.println(m_Train);
+/*		randomfactor = 2*random.nextDouble()-1;
 		System.out.println("first instance "+m_Train.firstInstance());
 		System.out.println("last instance "+m_Train.lastInstance());
-		Instance ins1 = instancesub(m_Train.firstInstance(),m_Train.lastInstance());
-		System.out.println("sub instance "+ins1);
+		Instance ins1 = instancesub(m_Train.firstInstance(),m_Train.lastInstance(),randomfactor);
+		System.out.println("sub instance "+ins1);*/
 		
 
 		m_MinArray = new double[m_Train.numAttributes()];
@@ -323,7 +323,7 @@ public class IB1_Evlution extends Classifier implements UpdateableClassifier, Te
 		population = new Instancevector[N];
 		class_min_Array = new double[numdclass][2];
 		class_max_Array = new double[numdclass][2];
-		System.out.println("number of class is" + numdclass);
+		System.out.println("number of class is	" + numdclass);
 
 		splitData = new Instances[numdclass];
 		for (int j = 0; j < numdclass; j++) {
@@ -334,25 +334,31 @@ public class IB1_Evlution extends Classifier implements UpdateableClassifier, Te
 
 		while (enu1.hasMoreElements()) {
 			Instance in = (Instance) enu1.nextElement();
-			// System.out.println(in + "*****");
 			splitData[(int) in.classValue()].add(in);
-			// splitData[0].add(in);
+
 		}
 
-		for (int j = 0; j < numdclass; j++) {
+/*		for (int j = 0; j < numdclass; j++) {
 			System.out.println(splitData[j]);
 			System.out.println("_______________________________________________");
-		}
+		}*/
 		randominstance();
-		// ibev.printinstancerandom();
+		//printinstancerandom();
 		
-		for(int i = 0;i<1;i++){
+		for(int i = 0;i<2;i++){
+			
 			printpopulation();
 			caculate_fittness();
 			print_fittness();
-			label = choose_the_best();
-			bestinsvec = population[label];
-			
+			choose_the_best();
+			//bestinsvec = population[label];		
+			//System.out.println("------------bestinstance-----------------");
+			//printinstancerandom(bestinsvec);
+			//System.out.println("------------bestfitness-----------------");
+			//System.out.println(fittness[label]);
+			evolution();
+/*			label = choose_the_best();
+			bestinsvec = population[label];		
 			System.out.println("------------bestinstance-----------------");
 			printinstancerandom(bestinsvec);
 			int randominti = random.nextInt(N);
@@ -366,10 +372,8 @@ public class IB1_Evlution extends Classifier implements UpdateableClassifier, Te
 			printinstancerandom(population[randomintj]);
 			System.out.println("------------subresult---------------------");
 			Instancevector insvectestj = instancevectorsub(insvecti,population[randomintj]);
-			printinstancerandom(insvectestj);
-			
-			
-			
+			printinstancerandom(insvectestj);*/
+					
 		}
 	
 		
@@ -377,8 +381,46 @@ public class IB1_Evlution extends Classifier implements UpdateableClassifier, Te
 		// TODO Auto-generated method stub
 
 	}
+	
+	
+	private void evolution(){
+		int randominti;
+		int randomintj;
+		
+		//choose_the_best();
+		bestinsvec = population[bestlabel];	
+		Instancevector insvecti;
+		Instancevector insvectestj;
+		
+		for(int i = 0;i<N;i++){
+			 randomfactor = 2*random.nextDouble()-1;
+			 //System.out.println("------------randomfactor-----------------");
+			 //System.out.println(randomfactor);
+			 randominti = random.nextInt(N);
+			 insvecti = instancevectoradd(bestinsvec,population[randominti],randomfactor);
+			 randomintj = random.nextInt(N);
+			 insvectestj = instancevectorsub(insvecti,population[randomintj],randomfactor);
+			 population[i] = insvectestj;
+			
+		}
+/*		System.out.println("------------bestinstance-----------------");
+		printinstancerandom(bestinsvec);
+		randominti = random.nextInt(N);
+		System.out.println("------------randominti--------------------"+randominti);
+		printinstancerandom(population[randominti]);
+		insvecti = instancevectoradd(bestinsvec,population[randominti]);
+		System.out.println("------------addresult---------------------");
+		printinstancerandom(insvecti);
+		randomintj = random.nextInt(N);
+		System.out.println("------------randomintj---------------------"+randomintj);
+		printinstancerandom(population[randomintj]);
+		System.out.println("------------subresult---------------------");
+		insvectestj = instancevectorsub(insvecti,population[randomintj]);
+		printinstancerandom(insvectestj);*/
+		
+	}
 
-	public void print_array(double[][] class_min_Array) {
+/*	public void print_array(double[][] class_min_Array) {
 		for (int j = 0; j < class_min_Array.length; j++) {
 
 			for (int k = 0; k < m_Train.numAttributes() - 1; k++) {
@@ -391,10 +433,10 @@ public class IB1_Evlution extends Classifier implements UpdateableClassifier, Te
 		}
 
 	}
+	*/
 	
 	
-	
-	private Instance instanceadd(Instance first,Instance second){
+	private Instance instanceadd(Instance first,Instance second,double factor){
 		
 		Instance ins = new Instance(first);
 		double addresult;
@@ -429,7 +471,7 @@ public class IB1_Evlution extends Classifier implements UpdateableClassifier, Te
 					}
 				} else {
 					//diff = norm(first.value(i), i) - norm(second.value(i), i);
-					addresult = first.value(i)+second.value(i);
+					addresult = (first.value(i)+second.value(i))*factor;
 					ins.setValue(i, addresult);
 					
 				}
@@ -440,7 +482,7 @@ public class IB1_Evlution extends Classifier implements UpdateableClassifier, Te
 	}
 	
 	
-	private Instance instancesub(Instance first,Instance second){
+	private Instance instancesub(Instance first,Instance second,double factor){
 		
 		Instance ins = new Instance(first);
 		double addresult;
@@ -475,7 +517,7 @@ public class IB1_Evlution extends Classifier implements UpdateableClassifier, Te
 					}
 				} else {
 					//diff = norm(first.value(i), i) - norm(second.value(i), i);
-					addresult = first.value(i)-second.value(i);
+					addresult = (first.value(i)-second.value(i))*factor;
 					ins.setValue(i, addresult);
 					
 				}
@@ -654,10 +696,10 @@ public class IB1_Evlution extends Classifier implements UpdateableClassifier, Te
 				int inSelectNumOne = random.nextInt(ins.numInstances());
 				Instance instanceSelectOne = ins.instance(inSelectNumOne);
 				insvec.getInsv()[j] = instanceSelectOne;
-				System.out.println("***********************");
+/*				System.out.println("***********************");
 				System.out.println("intSelectNumOne		" + inSelectNumOne);
 				System.out.println("instanceSelectOne		" + instanceSelectOne);
-				System.out.println("***********************");
+				System.out.println("***********************");*/
 			}
 			population[k] = insvec;
 
@@ -713,21 +755,21 @@ public class IB1_Evlution extends Classifier implements UpdateableClassifier, Te
 			for (int j = 0; j < m_Train.numClasses(); j++) {
 				// System.out.println(insarray[j]);
 				Instance insindividual = new Instance(insarray[j]);
-				System.out.println("k ==" + k + "  " + "j == " + j);
+				//System.out.println("k ==" + k + "  " + "j == " + j);
 				// System.out.println("insnj =="+insarray[j]);
 
-				System.out.println("insindividual ==" + insindividual);
+				//System.out.println("insindividual ==" + insindividual);
 				// System.out.println(ins.classValue());
-				System.out.println("insm_Train ==" + inst);
+				//System.out.println("insm_Train ==" + inst);
 				// System.out.println(inst.classValue());
 				distance = distance(insindividual, inst);
-				System.out.println("distance ==" + distance);
+				//System.out.println("distance ==" + distance);
 				if (distance < minDistance) {
 					minDistance = distance;
 					index = j;
 				}
-				System.out.println("mindistance ==" + minDistance);
-				System.out.println("index ==" + index);
+				//System.out.println("mindistance ==" + minDistance);
+				//System.out.println("index ==" + index);
 			}
 
 			classlebel[k] = index;
@@ -737,20 +779,20 @@ public class IB1_Evlution extends Classifier implements UpdateableClassifier, Te
 
 		}
 
-		for (int k = 0; k < m_Train.numInstances(); k++) {
+/*		for (int k = 0; k < m_Train.numInstances(); k++) {
 			System.out.print(classlebel[k] + "\t");
 		}
 		System.out.println();
 		for (int k = 0; k < m_Train.numInstances(); k++) {
 			System.out.print(distancearray[k] + "\t");
-		}
+		}*/
 		System.out.println();
 		double right = 0;
 		double wrong = 0;
 		double percent = 0;
 		for (int k = 0; k < m_Train.numInstances(); k++) {
-			System.out.println("classlabel	" + classlebel[k]);
-			System.out.println("instancelabel	" + m_Train.instance(k).classValue());
+			//System.out.println("classlabel	" + classlebel[k]+"	instancelabel	"+m_Train.instance(k).classValue());
+			//System.out.println("instancelabel	" + m_Train.instance(k).classValue());
 			if (m_Train.instance(k).classValue() == classlebel[k]) {
 				right++;
 			} else {
@@ -759,7 +801,7 @@ public class IB1_Evlution extends Classifier implements UpdateableClassifier, Te
 		}
 
 		percent = right / (right + wrong);
-		System.out.println("percent	" + percent);
+		System.out.println("percentage	==	" + percent);
 		return percent;
 
 	}
