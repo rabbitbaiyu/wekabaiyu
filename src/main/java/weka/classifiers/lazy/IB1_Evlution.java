@@ -2,6 +2,7 @@
 package weka.classifiers.lazy;
 
 import java.io.FileReader;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -63,13 +64,14 @@ public class IB1_Evlution extends Classifier implements UpdateableClassifier, Te
 	//private Instancevector insvec;
 
 	/** Population number */
-	private int N = 5;
+	private int N = 10;
 
 	double randomfactor;
 	
-	private int Maxgen = 200;
+	private int Maxgen = 100;
 	
 	private double CR = 0.5;
+	private Instancevector bestinsvec;
 
 	Random random = new Random();
 
@@ -80,12 +82,16 @@ public class IB1_Evlution extends Classifier implements UpdateableClassifier, Te
 
 	public static void main(String[] argv) throws Exception {
 
-		String filepath = "C:/Users/baiyu/Desktop/weka-src/src/main/java/data/diabetes.arff";
+	/*	String filepath = "C:/Users/baiyu/Desktop/weka-src/src/main/java/data/diabetes.arff";
 		//String filepath = "/Users/rabbitbaiyu/git/wekabaiyu/src/main/java/data/diabetes.arff";
 		IB1_Evlution ibev = new IB1_Evlution();
 		Instances ins = ibev.getinstance(filepath);
 		ins.setClassIndex(ins.numAttributes() - 1);		
 		ibev.buildClassifier(ins);
+		System.out.println("begin classify	" );
+		ibev.classifyInstance(ins.lastInstance());
+		System.out.println("end   classify	" );*/
+		runClassifier(new IB1_Evlution(), argv);
 
 
 	}
@@ -324,10 +330,10 @@ public class IB1_Evlution extends Classifier implements UpdateableClassifier, Te
 			double fitness [] = caculate_fittness(population);
 			//print_fittness(fitness);
 			int label = choose_the_best(fitness);
-			Instancevector bestinsvec = population[label];		
+			bestinsvec = population[label];		
 			//System.out.println("------------bestinstance-----------------");
 			//printinstancerandom(bestinsvec);
-			System.out.println("bestfitness		"+i+"	"+fitness[label]);
+			//System.out.println("bestfitness		"+	i +"	"+fitness[label]);
 			//System.out.println(fitness[label]);
 			Instancevector [] newpopulation = evolution(population,label);
 			Instancevector [] crosspopulation = cross(population,newpopulation);
@@ -741,10 +747,12 @@ private Instance instancecross(Instance first,Instance second){
 			throw new Exception("No training instances!");
 		}
 
-		double distance, minDistance = Double.MAX_VALUE, classValue = 0;
+		double distance, minDistance = Double.MAX_VALUE, classValue = -1;
+		
 		updateMinMax(instance);
 		Enumeration enu = m_Train.enumerateInstances();
-		while (enu.hasMoreElements()) {
+		System.out.println(instance);
+/*		while (enu.hasMoreElements()) {
 			Instance trainInstance = (Instance) enu.nextElement();
 			if (!trainInstance.classIsMissing()) {
 				distance = distance(instance, trainInstance);
@@ -753,8 +761,34 @@ private Instance instancecross(Instance first,Instance second){
 					classValue = trainInstance.classValue();
 				}
 			}
-		}
+		}*/
+		
+		Instance[] insarray = bestinsvec.getInsv();
+		for (int j = 0; j < m_Train.numClasses(); j++) {
+			// System.out.println(insarray[j]);
+			Instance insindividual = new Instance(insarray[j]);
+			insindividual.setDataset(m_Train);
+			//insindividual.setClassValue(-1);
+			//System.out.println("k ==" + k + "  " + "j == " + j);
+			//System.out.println("insn"+j+"=="+insarray[j]);
 
+			//System.out.println("insindividual ==" + insindividual);
+			// System.out.println(ins.classValue());
+			//System.out.println("insm_Train ==" + inst);
+			// System.out.println(inst.classValue());
+			distance = distance(insindividual, instance);
+			//System.out.println("distance ==" + distance);
+			if (distance < minDistance) {
+				minDistance = distance;
+				classValue =insindividual.classValue() ;
+				//System.out.println("classValue="+classValue+"  j="+j);
+			}
+			
+			//System.out.println("mindistance ==" + minDistance);
+			//System.out.println("index ==" + index);
+		}
+		//System.out.println("classValue="+classValue);
+		
 		return classValue;
 	}
 
@@ -938,10 +972,35 @@ private Instance instancecross(Instance first,Instance second){
 		return percent;
 
 	}
+	
+	
+	private class Instancevector implements Serializable {
+		// private int num;
+		
+		
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = -812101155693927872L;
+		private Instance[] insv;
+
+		Instancevector(int number) {
+			insv = new Instance[number];
+		}
+
+		public Instance[] getInsv() {
+			return insv;
+		}
+
+		public void setInsv(Instance[] insv) {
+			this.insv = insv;
+		}
+
+	}
 
 }
 
-class Instancevector {
+/*class Instancevector {
 	// private int num;
 	private Instance[] insv;
 
@@ -957,6 +1016,6 @@ class Instancevector {
 		this.insv = insv;
 	}
 
-}
+}*/
 
 
