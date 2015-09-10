@@ -64,13 +64,13 @@ public class IB1_Evlution extends Classifier implements UpdateableClassifier, Te
 	//private Instancevector insvec;
 
 	/** Population number */
-	private int N = 100;
+	private int N = 1000;
 
 	double randomfactor;
 	
-	private int Maxgen = 100;
+	private int Maxgen = 300;
 	
-	private double CR = 0.5;
+	private double CR = 0.6;
 	private Instancevector bestinsvec;
 
 	Random random = new Random();
