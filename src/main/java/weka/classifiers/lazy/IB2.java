@@ -35,6 +35,9 @@ import weka.core.Capabilities.Capability;
 import weka.core.TechnicalInformation.Field;
 import weka.core.TechnicalInformation.Type;
 import weka.core.converters.ConverterUtils.DataSource;
+import weka.core.neighboursearch.LinearNNSearch;
+import weka.core.neighboursearch.NearestNeighbourSearch;
+
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -93,6 +96,8 @@ public class IB2
 
   /** The maximum values for numeric attributes. */
   private double [] m_MaxArray;
+  
+  protected NearestNeighbourSearch m_NNSearch = new LinearNNSearch();
 
   /**
    * Returns a string describing classifier
@@ -239,6 +244,7 @@ public class IB2
 	for(int k=0;k<d.length;k++){
 		 System.out.println("k= "+k+"	distance = "+d[k]);
 	}
+	
 	ArrayList ar = new ArrayList();
 	Arrays.sort(d);
 	System.out.println("after sort...");
@@ -370,6 +376,13 @@ public class IB2
 		System.out.println("**************");
 		return data;
 	}
+	
+	
+	
+	
+	
+	
+	
   
   
   
