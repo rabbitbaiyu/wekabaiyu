@@ -82,16 +82,16 @@ public class IB1_Evlution extends Classifier implements UpdateableClassifier, Te
 
 	public static void main(String[] argv) throws Exception {
 
-	/*	String filepath = "C:/Users/baiyu/Desktop/weka-src/src/main/java/data/diabetes.arff";
-		//String filepath = "/Users/rabbitbaiyu/git/wekabaiyu/src/main/java/data/diabetes.arff";
+		//String filepath = "C:/Users/baiyu/Desktop/weka-src/src/main/java/data/diabetes.arff";
+		String filepath = "/Users/rabbitbaiyu/git/wekabaiyu/src/main/java/data/diabetes.arff";
 		IB1_Evlution ibev = new IB1_Evlution();
 		Instances ins = ibev.getinstance(filepath);
 		ins.setClassIndex(ins.numAttributes() - 1);		
 		ibev.buildClassifier(ins);
 		System.out.println("begin classify	" );
 		ibev.classifyInstance(ins.lastInstance());
-		System.out.println("end   classify	" );*/
-		runClassifier(new IB1_Evlution(), argv);
+		System.out.println("end   classify	" );
+		//runClassifier(new IB1_Evlution(), argv);
 
 
 	}
