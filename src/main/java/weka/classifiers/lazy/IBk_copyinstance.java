@@ -129,7 +129,7 @@ import java.util.Vector;
  * @author Eibe Frank (eibe@cs.waikato.ac.nz)
  * @version $Revision: 10069 $
  */
-public class IBk3 extends Classifier implements OptionHandler, UpdateableClassifier, WeightedInstancesHandler,
+public class IBk_copyinstance extends Classifier implements OptionHandler, UpdateableClassifier, WeightedInstancesHandler,
 		TechnicalInformationHandler, AdditionalMeasureProducer {
 
 	/** for serialization. */
@@ -204,7 +204,7 @@ public class IBk3 extends Classifier implements OptionHandler, UpdateableClassif
 	 * @param k
 	 *            the number of nearest neighbors to use for prediction
 	 */
-	public IBk3(int k) {
+	public IBk_copyinstance(int k) {
 
 		init();
 		setKNN(k);
@@ -214,7 +214,7 @@ public class IBk3 extends Classifier implements OptionHandler, UpdateableClassif
 	 * IB1 classifer. Instance-based learner. Predicts the class of the single
 	 * nearest training instance for each test instance.
 	 */
-	public IBk3() {
+	public IBk_copyinstance() {
 
 		init();
 	}
@@ -596,28 +596,49 @@ public class IBk3 extends Classifier implements OptionHandler, UpdateableClassif
 			// throw new Exception("No training instances!");
 			return m_defaultModel.distributionForInstance(instance);
 		}
-		if ((m_WindowSize > 0) && (m_Train.numInstances() > m_WindowSize)) {
-			m_kNNValid = false;
-			boolean deletedInstance = false;
-			while (m_Train.numInstances() > m_WindowSize) {
-				m_Train.delete(0);
-			}
-			// rebuild datastructure KDTree currently can't delete
-			if (deletedInstance == true)
-				m_NNSearch.setInstances(m_Train);
-		}
+
 
 		// Select k by cross validation
-		if (!m_kNNValid && (m_CrossValidate) && (m_kNNUpper >= 1)) {
-			crossValidate();
-		}
 
-		m_NNSearch.addInstanceInfo(instance);
+
+
 		//m_kNN = 3;
-		Instances neighbours = m_NNSearch.kNearestNeighbours(instance, m_kNN);
-		double[] distances = m_NNSearch.getDistances();
+
+		int length = m_Train.numInstances();
+		int [] similar = new int[length] ;
+		int count =0;
 		
-		for (int k = 0; k <neighbours.numInstances(); k++) {
+	    Enumeration enu = m_Train.enumerateInstances();
+	    while (enu.hasMoreElements()) {
+	      Instance trainInstance = (Instance) enu.nextElement();
+	      if (!trainInstance.classIsMissing()) {
+		int instancesimilar = distance(instance, trainInstance);	
+		similar[count] = instancesimilar;
+		count++;
+/*		if (distance < minDistance) {
+		  minDistance = distance;
+		  classValue = trainInstance.classValue();
+		}*/
+	      }
+	    }
+	    
+	    
+	    for (int k=0;k<similar.length;k++){
+	    	System.out.println("similar of instance "+k+"	is  "+similar[k]);
+	    }
+	    
+	    for(int k=0;k<length;k++){
+	    	int countnum = similar[k];
+	    	//Instance ins = m_Train.instance(k);
+	    	for(int m =0;m<countnum;m++){
+	    		m_Train.add(m_Train.instance(k));
+	    	}
+		}
+	    
+	    
+
+		
+/*		for (int k = 0; k <neighbours.numInstances(); k++) {
 			System.out.println("-------");
 			//Instance in = new Instance();
 			Instance insk = neighbours.instance(k);
@@ -638,7 +659,7 @@ public class IBk3 extends Classifier implements OptionHandler, UpdateableClassif
 				
 				m_Train.add(insk);
 			}
-		}
+		}*/
 		
 		System.out.println("number of instances		"+m_Train.numInstances());
 		
@@ -649,12 +670,12 @@ public class IBk3 extends Classifier implements OptionHandler, UpdateableClassif
 		}
 		
 		
-		for (int k = 0; k < distances.length; k++) {
+/*		for (int k = 0; k < distances.length; k++) {
 			System.out.println("-------");
 			System.out.println("distance of "+k+"	"+distances[k]);
 			System.out.println("-------");
 		}
-		
+		*/
 		nb.buildClassifier(m_Train);
 		double [] dis = nb.distributionForInstance(instance);
 		//double[] distribution = makeDistribution(neighbours, distances);
@@ -693,6 +714,59 @@ public class IBk3 extends Classifier implements OptionHandler, UpdateableClassif
 
 		return newVector.elements();
 	}
+	
+	
+	 private int distance(Instance first, Instance second) {
+		    
+		    double diff;
+		    int similar = 0;
+
+		    for(int i = 0; i < m_Train.numAttributes(); i++) { 
+		      if (i == m_Train.classIndex()) {
+			continue;
+		      }
+		      if (m_Train.attribute(i).isNominal()) {
+
+			// If attribute is nominal
+		/*	if (first.isMissing(i) || second.isMissing(i) ||
+			    ((int)first.value(i) != (int)second.value(i))) {
+			  distance += 1;
+			}*/
+			
+			if (
+				    ((int)first.value(i) == (int)second.value(i))) {
+				similar += 1;
+				}
+			
+		      } 
+		      
+/*		      else {
+			
+			// If attribute is numeric
+			if (first.isMissing(i) || second.isMissing(i)){
+			  if (first.isMissing(i) && second.isMissing(i)) {
+			    diff = 1;
+			  } else {
+			    if (second.isMissing(i)) {
+			      diff = norm(first.value(i), i);
+			    } else {
+			      diff = norm(second.value(i), i);
+			    }
+			    if (diff < 0.5) {
+			      diff = 1.0 - diff;
+			    }
+			  }
+			} else {
+			  diff = norm(first.value(i), i) - norm(second.value(i), i);
+			}
+			distance += diff * diff;
+		      }*/
+		      
+		      
+		    }
+		    
+		    return similar;
+		  }
 
 	/**
 	 * Parses a given list of options.
@@ -790,6 +864,13 @@ public class IBk3 extends Classifier implements OptionHandler, UpdateableClassif
 
 		Utils.checkForRemainingOptions(options);
 	}
+	
+	
+	
+	  private double norm(double x,int i) {
+
+		  return 0.0;
+		  }
 
 	/**
 	 * Gets the current settings of IBk.
@@ -1136,11 +1217,10 @@ public class IBk3 extends Classifier implements OptionHandler, UpdateableClassif
 	 * @throws Exception
 	 */
 	public static void main(String[] argv) throws Exception {
-		runClassifier(new IBk3(), argv);
+/*		//runClassifier(new IBk3(), argv);
 
-		/*String filepath ="F:/系统备份/weka-src/data/weather.nominal.arff";
-		//String filepath = "/Users/rabbitbaiyu/git/wekabaiyu/data/labor.arff";
-		IBk2 ib2 = new IBk2();
+		String filepath ="F:/系统备份/weka-src/data/weather.nominal.arff";
+		IBk_copyinstance ib2 = new IBk_copyinstance();
 		Instances ins = ib2.getinstance(filepath);
 		Instance inc2 = ins.instance(2);
 		//System.out.println(inc2);
@@ -1176,8 +1256,8 @@ public class IBk3 extends Classifier implements OptionHandler, UpdateableClassif
 		// System.out.println("begin classify " );
 		// ibev.classifyInstance(ins.lastInstance());
 		// System.out.println("end classify " );
-
-		// runClassifier(new IB2(), argv);
 */
+		runClassifier(new IBk_copyinstance(), argv);
+
 	}
 }
