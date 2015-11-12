@@ -403,7 +403,7 @@ public class IB1copy2 extends Classifier implements UpdateableClassifier, Techni
 		 runClassifier(new IB1copy2(), argv);
 
 		
-		 /*String filepath ="F:/系统备份/weka-src/data/weather.nominal1.arff";
+		 /*String filepath ="F:/系统备份/weka-src/data/56Data/kr-vs-kp.arff";
 		 IB1copy2 ib2 = new IB1copy2(); 
 		 Instances ins =ib2.getinstance(filepath); 
 		 Instance inc2 = ins.instance(2);
@@ -428,7 +428,7 @@ public class IB1copy2 extends Classifier implements UpdateableClassifier, Techni
 		 double dis = ib2.classifyInstance(inc3);
 		 System.out.println("hello world	"+dis);
 		 
-		  System.out.println();*/
+		 System.out.println();*/
 		  
 		 //System.out.println("hello world	"); 
 		// System.out.println(dis);
