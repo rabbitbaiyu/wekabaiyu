@@ -540,7 +540,7 @@ public class IBk_weight extends Classifier implements OptionHandler, UpdateableC
 
 		m_defaultModel = new ZeroR();
 		m_defaultModel.buildClassifier(instances);
-		System.out.println("hello world");
+		//System.out.println("hello world");
 
 	}
 
@@ -587,10 +587,10 @@ public class IBk_weight extends Classifier implements OptionHandler, UpdateableC
 	 *             if an error occurred during the prediction
 	 */
 	public double[] distributionForInstance(Instance instance) throws Exception {
-		
+			
 		NaiveBayes nb = new NaiveBayes();
 		
-		System.out.println("number of instances		"+m_Train.numInstances());
+		//System.out.println("number of instances		"+m_Train.numInstances());
 
 		if (m_Train.numInstances() == 0) {
 			// throw new Exception("No training instances!");
@@ -613,22 +613,31 @@ public class IBk_weight extends Classifier implements OptionHandler, UpdateableC
 		}
 
 		m_NNSearch.addInstanceInfo(instance);
-		//m_kNN = 3;
+		m_kNN = 10;
 		Instances neighbours = m_NNSearch.kNearestNeighbours(instance, m_kNN);
 		double[] distances = m_NNSearch.getDistances();
 		
-		for (int k = 0; k <neighbours.numInstances(); k++) {
+		for (int k = 0; k < distances.length; k++) {
 			System.out.println("-------");
+			System.out.println("distance of "+k+"	"+distances[k]);
+			distances[k] = distances[k]+0.01;
+			System.out.println("------- after add 0.01");
+			System.out.println("distance of "+k+"	"+distances[k]);
+		}
+		
+		Instances instances = new Instances(m_Train);
+		instances.deleteWithMissingClass();
+
+		Instances newm_Train = new Instances(instances, 0, instances.numInstances());
+		
+		for (int k = 0; k <neighbours.numInstances(); k++) {
+			//System.out.println("-------");
 			//Instance in = new Instance();
 			Instance insk = neighbours.instance(k);
-			System.out.println("instance "+k+"	"+neighbours.instance(k));
-			System.out.println("-------");
+			//System.out.println("instance "+k+"	"+neighbours.instance(k));
+			//System.out.println("-------");
 			double dis = distances[k];
 			System.out.println("dis		"+dis);
-			if(dis==0){
-				dis=10;
-			}
-			else
 			dis = 1/dis;
 			System.out.println("1/dis		"+dis);
 			int weightnum = (int) dis; 
@@ -636,15 +645,15 @@ public class IBk_weight extends Classifier implements OptionHandler, UpdateableC
 			
 			for(int s=0;s<weightnum;s++){
 				
-				m_Train.add(insk);
+				newm_Train.add(insk);
 			}
 		}
 		
-		System.out.println("number of instances		"+m_Train.numInstances());
+		System.out.println("number of instances		"+newm_Train.numInstances());
 		
-		for (int k = 0; k < m_Train.numInstances(); k++) {
+		for (int k = 0; k < newm_Train.numInstances(); k++) {
 			System.out.println("-------");
-			System.out.println("instance "+k+"	"+m_Train.instance(k));
+			System.out.println("instance "+k+"	"+newm_Train.instance(k));
 			System.out.println("-------");
 		}
 		
@@ -655,7 +664,7 @@ public class IBk_weight extends Classifier implements OptionHandler, UpdateableC
 			System.out.println("-------");
 		}
 		
-		nb.buildClassifier(m_Train);
+		nb.buildClassifier(newm_Train);
 		double [] dis = nb.distributionForInstance(instance);
 		//double[] distribution = makeDistribution(neighbours, distances);
 		return dis;
@@ -1136,11 +1145,11 @@ public class IBk_weight extends Classifier implements OptionHandler, UpdateableC
 	 * @throws Exception
 	 */
 	public static void main(String[] argv) throws Exception {
-		runClassifier(new IBk_weight(), argv);
+		//runClassifier(new IBk_weight(), argv);
 
-		/*String filepath ="F:/系统备份/weka-src/data/weather.nominal.arff";
+		String filepath ="F:/系统备份/weka-src/data/56Data/iris.arff";
 		//String filepath = "/Users/rabbitbaiyu/git/wekabaiyu/data/labor.arff";
-		IBk2 ib2 = new IBk2();
+		IBk_weight ib2 = new IBk_weight();
 		Instances ins = ib2.getinstance(filepath);
 		Instance inc2 = ins.instance(2);
 		//System.out.println(inc2);
@@ -1178,6 +1187,6 @@ public class IBk_weight extends Classifier implements OptionHandler, UpdateableC
 		// System.out.println("end classify " );
 
 		// runClassifier(new IB2(), argv);
-*/
+
 	}
 }
