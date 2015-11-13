@@ -129,7 +129,7 @@ import java.util.Vector;
  * @author Eibe Frank (eibe@cs.waikato.ac.nz)
  * @version $Revision: 10069 $
  */
-public class IBk_weight2 extends Classifier implements OptionHandler, UpdateableClassifier, WeightedInstancesHandler,
+public class IBk_NB extends Classifier implements OptionHandler, UpdateableClassifier, WeightedInstancesHandler,
 		TechnicalInformationHandler, AdditionalMeasureProducer {
 
 	/** for serialization. */
@@ -204,7 +204,7 @@ public class IBk_weight2 extends Classifier implements OptionHandler, Updateable
 	 * @param k
 	 *            the number of nearest neighbors to use for prediction
 	 */
-	public IBk_weight2(int k) {
+	public IBk_NB(int k) {
 
 		init();
 		setKNN(k);
@@ -214,7 +214,7 @@ public class IBk_weight2 extends Classifier implements OptionHandler, Updateable
 	 * IB1 classifer. Instance-based learner. Predicts the class of the single
 	 * nearest training instance for each test instance.
 	 */
-	public IBk_weight2() {
+	public IBk_NB() {
 
 		init();
 	}
@@ -1151,7 +1151,7 @@ public class IBk_weight2 extends Classifier implements OptionHandler, Updateable
 
 		/*String filepath ="F:/系统备份/weka-src/data/56Data/iris.arff";
 		//String filepath = "/Users/rabbitbaiyu/git/wekabaiyu/data/labor.arff";
-		IBk_weight2 ib2 = new IBk_weight2();
+		IBk_NB ib2 = new IBk_NB();
 		Instances ins = ib2.getinstance(filepath);
 		Instance inc2 = ins.instance(2);
 		//System.out.println(inc2);

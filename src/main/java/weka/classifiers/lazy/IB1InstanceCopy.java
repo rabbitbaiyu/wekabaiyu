@@ -84,7 +84,7 @@ import java.util.Enumeration;
  * @author Eibe Frank (eibe@cs.waikato.ac.nz)
  * @version $Revision: 5525 $
  */
-public class IB1copy2 extends Classifier implements UpdateableClassifier, TechnicalInformationHandler {
+public class IB1InstanceCopy extends Classifier implements UpdateableClassifier, TechnicalInformationHandler {
 
 	/** for serialization */
 	static final long serialVersionUID = -6152184127304895851L;
@@ -400,11 +400,11 @@ public class IB1copy2 extends Classifier implements UpdateableClassifier, Techni
 	 * @throws Exception
 	 */
 	public static void main(String[] argv) throws Exception {
-		 runClassifier(new IB1copy2(), argv);
+		 runClassifier(new IB1InstanceCopy(), argv);
 
 		
 		 /*String filepath ="F:/系统备份/weka-src/data/56Data/iris.arff";
-		 IB1copy2 ib2 = new IB1copy2(); 
+		 IB1InstanceCopy ib2 = new IB1InstanceCopy(); 
 		 Instances ins =ib2.getinstance(filepath); 
 		 Instance inc2 = ins.instance(2);
 		 //System.out.println(inc2); 
