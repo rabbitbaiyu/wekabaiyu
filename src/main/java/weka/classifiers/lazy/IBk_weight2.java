@@ -617,14 +617,14 @@ public class IBk_weight2 extends Classifier implements OptionHandler, Updateable
 		Instances neighbours = m_NNSearch.kNearestNeighbours(instance, m_kNN);
 		double[] distances = m_NNSearch.getDistances();
 		
-		for (int k = 0; k < distances.length; k++) {
+/*		for (int k = 0; k < distances.length; k++) {
 			System.out.println("-------");
 			System.out.println("distance of "+k+"	"+distances[k]);
 			distances[k] = distances[k]+0.01;
 			System.out.println("------- after add 0.01");
 			System.out.println("distance of "+k+"	"+distances[k]);
 		}
-		
+		*/
 		Instances instances = new Instances(neighbours);
 		instances.deleteWithMissingClass();
 
@@ -1147,9 +1147,9 @@ public class IBk_weight2 extends Classifier implements OptionHandler, Updateable
 	 * @throws Exception
 	 */
 	public static void main(String[] argv) throws Exception {
-		//runClassifier(new IBk_weight(), argv);
+		runClassifier(new IBk_weight(), argv);
 
-		String filepath ="F:/系统备份/weka-src/data/56Data/iris.arff";
+		/*String filepath ="F:/系统备份/weka-src/data/56Data/iris.arff";
 		//String filepath = "/Users/rabbitbaiyu/git/wekabaiyu/data/labor.arff";
 		IBk_weight2 ib2 = new IBk_weight2();
 		Instances ins = ib2.getinstance(filepath);
@@ -1179,7 +1179,7 @@ public class IBk_weight2 extends Classifier implements OptionHandler, Updateable
 		// System.out.println(dis);
 		for (int k = 0; k < dis.length; k++) {
 			System.out.println("distributtion "+k+"	:"+dis[k]);
-		}
+		}*/
 
 		// remove instances with missing class
 
