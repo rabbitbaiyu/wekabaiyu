@@ -400,7 +400,7 @@ public class IB1copy2 extends Classifier implements UpdateableClassifier, Techni
 	 * @throws Exception
 	 */
 	public static void main(String[] argv) throws Exception {
-		 //runClassifier(new IB1copy2(), argv);
+		 runClassifier(new IB1copy2(), argv);
 
 		
 		 /*String filepath ="F:/系统备份/weka-src/data/56Data/iris.arff";
