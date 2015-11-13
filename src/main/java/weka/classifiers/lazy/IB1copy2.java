@@ -400,15 +400,15 @@ public class IB1copy2 extends Classifier implements UpdateableClassifier, Techni
 	 * @throws Exception
 	 */
 	public static void main(String[] argv) throws Exception {
-		 runClassifier(new IB1copy2(), argv);
+		 //runClassifier(new IB1copy2(), argv);
 
 		
-		 /*String filepath ="F:/系统备份/weka-src/data/56Data/kr-vs-kp.arff";
+		 /*String filepath ="F:/系统备份/weka-src/data/56Data/iris.arff";
 		 IB1copy2 ib2 = new IB1copy2(); 
 		 Instances ins =ib2.getinstance(filepath); 
 		 Instance inc2 = ins.instance(2);
 		 //System.out.println(inc2); 
-		 Instance inc3 = ins.instance(3);
+		 Instance inc3 = ins.instance(93);
 		 //System.out.println(inc3); // System.out.println(ins);
 		 System.out.println("----------");
 		 ins.setClassIndex(ins.numAttributes() - 1); 
@@ -430,15 +430,9 @@ public class IB1copy2 extends Classifier implements UpdateableClassifier, Techni
 		 
 		 System.out.println();*/
 		  
-		 //System.out.println("hello world	"); 
+		//System.out.println("hello world	"); 
 		// System.out.println(dis);
-/*		  for (int k = 0; k < dis.length; k++) { 
-			  System.out.println( "distributtion "+k+"	:"+dis[k]); 
-			  }*/
-		 
-
 		// remove instances with missing class
-
 		// ibev.buildClassifier(ins);
 		// System.out.println("begin classify " );
 		// ibev.classifyInstance(ins.lastInstance());
