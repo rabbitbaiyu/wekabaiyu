@@ -129,7 +129,7 @@ import java.util.Vector;
  * @author Eibe Frank (eibe@cs.waikato.ac.nz)
  * @version $Revision: 10069 $
  */
-public class IBk_copyinstance extends Classifier implements OptionHandler, UpdateableClassifier, WeightedInstancesHandler,
+public class IBk_Copynewcal extends Classifier implements OptionHandler, UpdateableClassifier, WeightedInstancesHandler,
 		TechnicalInformationHandler, AdditionalMeasureProducer {
 
 	/** for serialization. */
@@ -204,7 +204,7 @@ public class IBk_copyinstance extends Classifier implements OptionHandler, Updat
 	 * @param k
 	 *            the number of nearest neighbors to use for prediction
 	 */
-	public IBk_copyinstance(int k) {
+	public IBk_Copynewcal(int k) {
 
 		init();
 		setKNN(k);
@@ -214,7 +214,7 @@ public class IBk_copyinstance extends Classifier implements OptionHandler, Updat
 	 * IB1 classifer. Instance-based learner. Predicts the class of the single
 	 * nearest training instance for each test instance.
 	 */
-	public IBk_copyinstance() {
+	public IBk_Copynewcal() {
 
 		init();
 	}
@@ -540,7 +540,7 @@ public class IBk_copyinstance extends Classifier implements OptionHandler, Updat
 
 		m_defaultModel = new ZeroR();
 		m_defaultModel.buildClassifier(instances);
-		System.out.println("hello world");
+		//System.out.println("hello world");
 
 	}
 
@@ -587,96 +587,85 @@ public class IBk_copyinstance extends Classifier implements OptionHandler, Updat
 	 *             if an error occurred during the prediction
 	 */
 	public double[] distributionForInstance(Instance instance) throws Exception {
-		
+			
 		NaiveBayes nb = new NaiveBayes();
 		
-		System.out.println("number of instances		"+m_Train.numInstances());
+		//System.out.println("number of instances		"+m_Train.numInstances());
 
 		if (m_Train.numInstances() == 0) {
 			// throw new Exception("No training instances!");
 			return m_defaultModel.distributionForInstance(instance);
 		}
-
+		if ((m_WindowSize > 0) && (m_Train.numInstances() > m_WindowSize)) {
+			m_kNNValid = false;
+			boolean deletedInstance = false;
+			while (m_Train.numInstances() > m_WindowSize) {
+				m_Train.delete(0);
+			}
+			// rebuild datastructure KDTree currently can't delete
+			if (deletedInstance == true)
+				m_NNSearch.setInstances(m_Train);
+		}
 
 		// Select k by cross validation
-
-
-
-		//m_kNN = 3;
-
-		int length = m_Train.numInstances();
-		int [] similar = new int[length] ;
-		int count =0;
-		
-	    Enumeration enu = m_Train.enumerateInstances();
-	    while (enu.hasMoreElements()) {
-	      Instance trainInstance = (Instance) enu.nextElement();
-	      if (!trainInstance.classIsMissing()) {
-		int instancesimilar = distance(instance, trainInstance);	
-		similar[count] = instancesimilar;
-		count++;
-/*		if (distance < minDistance) {
-		  minDistance = distance;
-		  classValue = trainInstance.classValue();
-		}*/
-	      }
-	    }
-	    
-	    
-	    for (int k=0;k<similar.length;k++){
-	    	System.out.println("similar of instance "+k+"	is  "+similar[k]);
-	    }
-	    
-	    for(int k=0;k<length;k++){
-	    	int countnum = similar[k];
-	    	//Instance ins = m_Train.instance(k);
-	    	for(int m =0;m<countnum;m++){
-	    		m_Train.add(m_Train.instance(k));
-	    	}
+		if (!m_kNNValid && (m_CrossValidate) && (m_kNNUpper >= 1)) {
+			crossValidate();
 		}
-	    
-	    
 
+		m_NNSearch.addInstanceInfo(instance);
+		//m_kNN = 20;
+		Instances neighbours = m_NNSearch.kNearestNeighbours(instance, m_kNN);
+		double[] distances = m_NNSearch.getDistances();
 		
-/*		for (int k = 0; k <neighbours.numInstances(); k++) {
-			System.out.println("-------");
+		for (int k = 0; k < distances.length; k++) {
+			//System.out.println("-------");
+			//System.out.println("distance of "+k+"	"+distances[k]);
+			//System.out.println("instance of "+k+"	"+neighbours.instance(k));
+			distances[k] = distances[k]+0.1;
+			//System.out.println("------- after add 0.01");
+			//System.out.println("distance of "+k+"	"+distances[k]);
+		}
+		
+		Instances instances = new Instances(m_Train);
+		instances.deleteWithMissingClass();
+
+		Instances newm_Train = new Instances(instances, 0, instances.numInstances());
+		
+		for (int k = 0; k <neighbours.numInstances(); k++) {
+			//System.out.println("-------");
 			//Instance in = new Instance();
 			Instance insk = neighbours.instance(k);
-			System.out.println("instance "+k+"	"+neighbours.instance(k));
-			System.out.println("-------");
+			//System.out.println("instance "+k+"	"+neighbours.instance(k));
+			//System.out.println("-------");
 			double dis = distances[k];
-			System.out.println("dis		"+dis);
-			if(dis==0){
-				dis=10;
-			}
-			else
+			//System.out.println("dis		"+dis);
 			dis = 1/dis;
-			System.out.println("1/dis		"+dis);
+			//System.out.println("1/dis		"+dis);
 			int weightnum = (int) dis; 
-			System.out.println("weightnum		"+weightnum);
+			//System.out.println("weightnum		"+weightnum);
 			
 			for(int s=0;s<weightnum;s++){
 				
-				m_Train.add(insk);
+				newm_Train.add(insk);
 			}
-		}*/
+		}
 		
-		System.out.println("number of instances		"+m_Train.numInstances());
+	/*	System.out.println("number of instances		"+newm_Train.numInstances());
 		
-		for (int k = 0; k < m_Train.numInstances(); k++) {
+		for (int k = 0; k < newm_Train.numInstances(); k++) {
 			System.out.println("-------");
-			System.out.println("instance "+k+"	"+m_Train.instance(k));
+			System.out.println("instance "+k+"	"+newm_Train.instance(k));
 			System.out.println("-------");
 		}
 		
 		
-/*		for (int k = 0; k < distances.length; k++) {
+		for (int k = 0; k < distances.length; k++) {
 			System.out.println("-------");
 			System.out.println("distance of "+k+"	"+distances[k]);
 			System.out.println("-------");
-		}
-		*/
-		nb.buildClassifier(m_Train);
+		}*/
+		
+		nb.buildClassifier(newm_Train);
 		double [] dis = nb.distributionForInstance(instance);
 		//double[] distribution = makeDistribution(neighbours, distances);
 		return dis;
@@ -714,59 +703,6 @@ public class IBk_copyinstance extends Classifier implements OptionHandler, Updat
 
 		return newVector.elements();
 	}
-	
-	
-	 private int distance(Instance first, Instance second) {
-		    
-		    double diff;
-		    int similar = 0;
-
-		    for(int i = 0; i < m_Train.numAttributes(); i++) { 
-		      if (i == m_Train.classIndex()) {
-			continue;
-		      }
-		      if (m_Train.attribute(i).isNominal()) {
-
-			// If attribute is nominal
-		/*	if (first.isMissing(i) || second.isMissing(i) ||
-			    ((int)first.value(i) != (int)second.value(i))) {
-			  distance += 1;
-			}*/
-			
-			if (
-				    ((int)first.value(i) == (int)second.value(i))) {
-				similar += 1;
-				}
-			
-		      } 
-		      
-/*		      else {
-			
-			// If attribute is numeric
-			if (first.isMissing(i) || second.isMissing(i)){
-			  if (first.isMissing(i) && second.isMissing(i)) {
-			    diff = 1;
-			  } else {
-			    if (second.isMissing(i)) {
-			      diff = norm(first.value(i), i);
-			    } else {
-			      diff = norm(second.value(i), i);
-			    }
-			    if (diff < 0.5) {
-			      diff = 1.0 - diff;
-			    }
-			  }
-			} else {
-			  diff = norm(first.value(i), i) - norm(second.value(i), i);
-			}
-			distance += diff * diff;
-		      }*/
-		      
-		      
-		    }
-		    
-		    return similar;
-		  }
 
 	/**
 	 * Parses a given list of options.
@@ -864,13 +800,6 @@ public class IBk_copyinstance extends Classifier implements OptionHandler, Updat
 
 		Utils.checkForRemainingOptions(options);
 	}
-	
-	
-	
-	  private double norm(double x,int i) {
-
-		  return 0.0;
-		  }
 
 	/**
 	 * Gets the current settings of IBk.
@@ -1217,10 +1146,12 @@ public class IBk_copyinstance extends Classifier implements OptionHandler, Updat
 	 * @throws Exception
 	 */
 	public static void main(String[] argv) throws Exception {
-/*		//runClassifier(new IBk3(), argv);
+		runClassifier(new IBk_Copynewcal(), argv);
 
-		String filepath ="F:/系统备份/weka-src/data/weather.nominal.arff";
-		IBk_copyinstance ib2 = new IBk_copyinstance();
+		/*String filepath ="F:/系统备份/weka-src/data/56Data/hypothyroid.arff";
+		//String filepath ="F:/系统备份/weka-src/data/weather.nominal1.arff";
+		//String filepath = "/Users/rabbitbaiyu/git/wekabaiyu/data/labor.arff";
+		IBk_Copynewcal ib2 = new IBk_Copynewcal();
 		Instances ins = ib2.getinstance(filepath);
 		Instance inc2 = ins.instance(2);
 		//System.out.println(inc2);
@@ -1248,7 +1179,7 @@ public class IBk_copyinstance extends Classifier implements OptionHandler, Updat
 		// System.out.println(dis);
 		for (int k = 0; k < dis.length; k++) {
 			System.out.println("distributtion "+k+"	:"+dis[k]);
-		}
+		}*/
 
 		// remove instances with missing class
 
@@ -1256,8 +1187,8 @@ public class IBk_copyinstance extends Classifier implements OptionHandler, Updat
 		// System.out.println("begin classify " );
 		// ibev.classifyInstance(ins.lastInstance());
 		// System.out.println("end classify " );
-*/
-		runClassifier(new IBk_copyinstance(), argv);
+
+		// runClassifier(new IB2(), argv);
 
 	}
 }
