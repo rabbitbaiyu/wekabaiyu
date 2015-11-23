@@ -168,19 +168,15 @@ public class IB1KIC extends Classifier implements UpdateableClassifier, Technica
 	 *             if the classifier has not been generated successfully
 	 */
 	public void buildClassifier(Instances instances) throws Exception {
-
+		
 		// can classifier handle the data?
 		getCapabilities().testWithFail(instances);
-
 		// remove instances with missing class
 		instances = new Instances(instances);
 		instances.deleteWithMissingClass();
-
 		m_Train = new Instances(instances, 0, instances.numInstances());
 		//System.out.println("numInstances	" + m_Train.numInstances());
 		
-
-
 	}
 
 	/**
@@ -328,9 +324,6 @@ public class IB1KIC extends Classifier implements UpdateableClassifier, Technica
 				continue;
 			}
 			if (m_Train.attribute(i).isNominal()) {
-
-
-
 				if (((int) first.value(i) == (int) second.value(i))) {
 					similar += 1;
 				}
