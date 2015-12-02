@@ -84,7 +84,7 @@ import java.util.Enumeration;
  * @author Eibe Frank (eibe@cs.waikato.ac.nz)
  * @version $Revision: 5525 $
  */
-public class IB1KIC extends Classifier implements UpdateableClassifier, TechnicalInformationHandler {
+public class IB1IC_ED_PERCENTAGE3 extends Classifier implements UpdateableClassifier, TechnicalInformationHandler {
 
 	/** for serialization */
 	static final long serialVersionUID = -6152184127304895851L;
@@ -93,10 +93,17 @@ public class IB1KIC extends Classifier implements UpdateableClassifier, Technica
 	private Instances m_Train;
 
 	/** The minimum values for numeric attributes. */
-	//private double[] m_MinArray;
+	private double[] m_MinArray;
 
 	/** The maximum values for numeric attributes. */
-	//private double[] m_MaxArray;
+	private double[] m_MaxArray;
+	private IBk_Copy ibkic;
+	
+	private double percentage;
+	
+	private double factor;
+	
+	private int idnumber=10;
 
 	/**
 	 * Returns a string describing classifier
@@ -158,6 +165,84 @@ public class IB1KIC extends Classifier implements UpdateableClassifier, Technica
 
 		return result;
 	}
+	
+	
+	
+	 private double distance(Instance first, Instance second) {
+		    
+		    double diff, distance = 0;
+
+		    for(int i = 0; i < m_Train.numAttributes(); i++) { 
+		      if (i == m_Train.classIndex()) {
+			continue;
+		      }
+		      if (m_Train.attribute(i).isNominal()) {
+
+			// If attribute is nominal
+			if (first.isMissing(i) || second.isMissing(i) ||
+			    ((int)first.value(i) != (int)second.value(i))) {
+			  distance += 1;
+			}
+		      } else {
+			
+			// If attribute is numeric
+			if (first.isMissing(i) || second.isMissing(i)){
+			  if (first.isMissing(i) && second.isMissing(i)) {
+			    diff = 1;
+			  } else {
+			    if (second.isMissing(i)) {
+			      diff = norm(first.value(i), i);
+			    } else {
+			      diff = norm(second.value(i), i);
+			    }
+			    if (diff < 0.5) {
+			      diff = 1.0 - diff;
+			    }
+			  }
+			} else {
+			  diff = norm(first.value(i), i) - norm(second.value(i), i);
+			}
+			distance += diff * diff;
+		      }
+		    }
+		    
+		    return distance;
+		  }
+	 
+	 
+	  private double norm(double x,int i) {
+
+		    if (Double.isNaN(m_MinArray[i])
+			|| Utils.eq(m_MaxArray[i], m_MinArray[i])) {
+		      return 0;
+		    } else {
+		      return (x - m_MinArray[i]) / (m_MaxArray[i] - m_MinArray[i]);
+		    }
+		  }
+	
+	
+	  
+	  private void updateMinMax(Instance instance) {
+		    
+		    for (int j = 0;j < m_Train.numAttributes(); j++) {
+		      if ((m_Train.attribute(j).isNumeric()) && (!instance.isMissing(j))) {
+			if (Double.isNaN(m_MinArray[j])) {
+			  m_MinArray[j] = instance.value(j);
+			  m_MaxArray[j] = instance.value(j);
+			} else {
+			  if (instance.value(j) < m_MinArray[j]) {
+			    m_MinArray[j] = instance.value(j);
+			  } else {
+			    if (instance.value(j) > m_MaxArray[j]) {
+			      m_MaxArray[j] = instance.value(j);
+			    }
+			  }
+			}
+		      }
+		    }
+		  }
+	
+	
 
 	/**
 	 * Generates the classifier.
@@ -168,15 +253,81 @@ public class IB1KIC extends Classifier implements UpdateableClassifier, Technica
 	 *             if the classifier has not been generated successfully
 	 */
 	public void buildClassifier(Instances instances) throws Exception {
-		
+
 		// can classifier handle the data?
 		getCapabilities().testWithFail(instances);
+
 		// remove instances with missing class
 		instances = new Instances(instances);
 		instances.deleteWithMissingClass();
+
 		m_Train = new Instances(instances, 0, instances.numInstances());
-		//System.out.println("numInstances	" + m_Train.numInstances());
-		
+		m_MinArray = new double [m_Train.numAttributes()];
+	    m_MaxArray = new double [m_Train.numAttributes()];
+	    for (int i = 0; i < m_Train.numAttributes(); i++) {
+	      m_MinArray[i] = m_MaxArray[i] = Double.NaN;
+	    }
+	    Enumeration enu = m_Train.enumerateInstances();
+	    while (enu.hasMoreElements()) {
+	      updateMinMax((Instance) enu.nextElement());
+	    }
+	    
+	    ibkic = new  IBk_Copy();
+	    ibkic.buildClassifier(m_Train);  
+	    ibkic.setAttrfactor(7);
+	   /* double right = 0;
+	    for(int k=0;k<instances.numInstances();k++){	    	
+	    	Instance in = instances.instance(k);
+	    	double[] classresult = ibkic.distributionForInstance(in);
+	    	for(int n =0;n<classresult.length;n++){
+	    		 //System.out.println("n ==	"+n+"kn=="+classresult[n]);
+	    	}
+	    	int index = 0;
+	    	double possibility = 0;
+	    	for(int m=0;m<classresult.length;m++){
+	    		if(classresult[m]>possibility){
+	    			index=m;
+	    			possibility =classresult[m]; 
+	    		}
+	    	}
+	    	double realvalue = in.classValue();
+	    	//System.out.println("index ==	"+index+"	realValue ==	"+realvalue);
+	    	if(index == realvalue ){
+	    		right++;
+	    		//System.out.println("right ==	"+right);
+	    	}
+	    }*/
+	    //double arrc = fitness(m_Train);
+/*	    double [] fit = new double[idnumber];
+	      
+		for (int m = 1; m < idnumber; m++) {
+			ibkic.setAttrfactor(m);
+			fit[m] = fitness(m_Train);
+		}*/
+	    
+	    //ibkic.setAttrfactor(1);
+	    //double ar = fitness(m_Train);
+	    
+	    //System.out.println("***********************************"+ar);
+	    //ibkic.setAttrfactor(3);
+	    //ar = fitness(m_Train);
+	    //System.out.println("***********************************"+ar);
+	    
+	    
+/*	    for(int k=0;k<fit.length;k++){
+	    	System.out.println("fit ==	"+k+"   "+fit[k]);
+	    }
+	    */
+	    //System.out.println("total right ==	"+right);
+	    //System.out.println("number of instance ==	"+instances.numInstances());
+	    
+	    //double ar = right/instances.numInstances();
+	    
+	    //System.out.println("arrc ==	"+arrc);
+	    
+	    
+	    
+
 	}
 
 	/**
@@ -208,104 +359,14 @@ public class IB1KIC extends Classifier implements UpdateableClassifier, Technica
 	 * @throws Exception
 	 *             if the instance can't be classified
 	 */
-	public double classifyInstance(Instance instance) throws Exception {
-
-		Instances instances = new Instances(m_Train);
-		instances.deleteWithMissingClass();
-
-		Instances newm_Train = new Instances(instances, 0, instances.numInstances());
-
-		if (m_Train.numInstances() == 0) {
-			throw new Exception("No training instances!");
-		}
-
-		double distance, minDistance = Double.MAX_VALUE, classValue = 0;
-		//updateMinMax(instance);
-
-		NaiveBayes nb = new NaiveBayes();
-
-		//System.out.println("number of instances		" + newm_Train.numInstances());
-		//System.out.println("-------" + newm_Train.instance(0));
-		//System.out.println("-------classvalue" + newm_Train.instance(0).classValue());
-
-		int length = newm_Train.numInstances();
-		int[] similar = new int[length];
-		int count = 0;
-
-		Enumeration enu = newm_Train.enumerateInstances();
-		while (enu.hasMoreElements()) {
-			Instance trainInstance = (Instance) enu.nextElement();
-			if (!trainInstance.classIsMissing()) {
-				int instancesimilar = distance(instance, trainInstance);
-				similar[count] = instancesimilar;
-				count++;
-			}
-		}
-
-		/*	for (int k = 0; k < similar.length; k++) {
-			System.out.println("similar of instance " + k + "	is  " + similar[k]);
-		}*/
+	public double[] distributionForInstance(Instance instance) throws Exception {
 		
+		//factor = 5;
+		//ibkic.setAttrfactor(factor);
 		
-		int similarity = m_Train.numAttributes();
-		int closest = (int)(similarity*0.7);
-		//System.out.println("similarity		" + similarity);
-		//System.out.println("closest		" + closest);
-		for (int k = 0; k < length; k++) {
-			int countnum = similar[k];
-			//System.out.println("countnum		" + countnum);
-			// Instance ins = m_Train.instance(k);
-			if(countnum>=closest){
-				for (int m = 0; m < countnum; m++) {
-					newm_Train.add(newm_Train.instance(k));
-				}
-			}
-			
-		}
+		return ibkic.distributionForInstance(instance);
 		
-		
-
-/*		for (int k = 0; k < length; k++) {
-			int countnum = similar[k];
-			// Instance ins = m_Train.instance(k);
-			for (int m = 0; m < countnum; m++) {
-				newm_Train.add(newm_Train.instance(k));
-			}
-		}*/
-
-		//System.out.println("number of instances		" + newm_Train.numInstances());
-
-/*		for (int k = 0; k < newm_Train.numInstances(); k++) {
-			System.out.println("-------");
-			System.out.println("instance " + k + "	" + newm_Train.instance(k));
-			System.out.println("-------");
-		}*/
-
-		/*
-		 * for (int k = 0; k < distances.length; k++) {
-		 * System.out.println("-------"); System.out.println("distance of "+k+
-		 * "	"+distances[k]); System.out.println("-------"); }
-		 */
-		nb.buildClassifier(newm_Train);
-		double possibility = -1;
-		double classvalue = 0;
-		double[] dis = nb.distributionForInstance(instance);
-		for (int m = 0; m < dis.length; m++) {
-			//System.out.println("-------" + m);
-			//System.out.println("------dis[m]-" + dis[m]);
-			//System.out.println("----possibility-before--" + possibility);
-			if (dis[m] > possibility) {
-				possibility = dis[m];
-				classvalue = m;
-			}
-			//System.out.println("---possibility-after----" + possibility);
-			//System.out.println("---classvalue----" + classvalue);
-
-		}
-		// double[] distribution = makeDistribution(neighbours, distances);
-		// return dis;
-
-		return classvalue;
+	
 	}
 
 	/**
@@ -314,26 +375,7 @@ public class IB1KIC extends Classifier implements UpdateableClassifier, Technica
 	 * @return a description of this classifier as a string.
 	 */
 
-	private int distance(Instance first, Instance second) {
 
-		//double diff;
-		int similar = 0;
-
-		for (int i = 0; i < m_Train.numAttributes(); i++) {
-			if (i == m_Train.classIndex()) {
-				continue;
-			}
-			if (m_Train.attribute(i).isNominal()) {
-				if (((int) first.value(i) == (int) second.value(i))) {
-					similar += 1;
-				}
-
-			}
-
-		}
-
-		return similar;
-	}
 
 	public String toString() {
 
@@ -367,25 +409,7 @@ public class IB1KIC extends Classifier implements UpdateableClassifier, Technica
 	 * @param instance
 	 *            the new instance
 	 */
-/*	private void updateMinMax(Instance instance) {
 
-		for (int j = 0; j < m_Train.numAttributes(); j++) {
-			if ((m_Train.attribute(j).isNumeric()) && (!instance.isMissing(j))) {
-				if (Double.isNaN(m_MinArray[j])) {
-					m_MinArray[j] = instance.value(j);
-					m_MaxArray[j] = instance.value(j);
-				} else {
-					if (instance.value(j) < m_MinArray[j]) {
-						m_MinArray[j] = instance.value(j);
-					} else {
-						if (instance.value(j) > m_MaxArray[j]) {
-							m_MaxArray[j] = instance.value(j);
-						}
-					}
-				}
-			}
-		}
-	}*/
 
 	/**
 	 * Returns the revision string.
@@ -414,37 +438,39 @@ public class IB1KIC extends Classifier implements UpdateableClassifier, Technica
 	 * @throws Exception
 	 */
 	public static void main(String[] argv) throws Exception {
-		 runClassifier(new IB1KIC(), argv);
-
-		
-		 //String filepath ="F:/系统备份/weka-src/data/56Data/iris.arff";
-		 /*String filepath ="F:/系统备份/weka-src/data/weather.nominal.arff";
-		 IB1KIC ib2 = new IB1KIC(); 
+			
+		 //runClassifier(new IB1IC_ED_PERCENTAGE(), argv);
+		 
+		 
+		 
+		 /*String filepath ="F:/系统备份/weka-src/data/56Data/car.arff";
+		 //String filepath ="F:/系统备份/weka-src/data/anneal.arff";
+		 IB1IC_ED_PERCENTAGE ib2 = new IB1IC_ED_PERCENTAGE(); 
 		 Instances ins =ib2.getinstance(filepath); 
 		 Instance inc2 = ins.instance(2);
 		 //System.out.println(inc2); 
-		 Instance inc3 = ins.instance(3);
-		 //System.out.println(inc3); // System.out.println(ins);
-		 System.out.println("----------");
+		 //Instance inc1 = ins.instance(1);
+		 //System.out.println(inc3); 
+		 // System.out.println(ins);
+		 //System.out.println("----------");
 		 ins.setClassIndex(ins.numAttributes() - 1); 
 		 //System.out.println(ins);
-		 //ins.add(inc2); System.out.println("---------- instance begin");
-		 System.out.println(ins); 
-		 System.out.println("---------- instance end"); 
+		 //ins.add(inc2); 
+		 //System.out.println("---------- instance begin");
+		 //System.out.println(ins); 
+		 //System.out.println("---------- instance end"); 
 		 ib2.buildClassifier(ins); 
-		 //int distance = ib2.distance(inc2, inc3); 
+		 //double distance = ib2.distance(inc2, inc3); 
 		 //System.out.println("distance=="+distance); 
 		 //ib2.buildClassifier(ins);
 		 // ib2.buildClassifier(ins);  
 		 //ib2.classifyInstance(inc2);
-		 System.out.println("---------- classify instance3 ");
-		 System.out.println(inc3); 
+		 //System.out.println("---------- classify instance3 ");
+		 //System.out.println(inc1); 
 		 //System.out.println("---------- instance end"); 
-		 double dis = ib2.classifyInstance(inc3);
-		 System.out.println("hello world	"+dis);
-		 
-		 System.out.println();*/
-		  
+		 //double dis = ib2.classifyInstance(inc1);
+		 //System.out.println("hello world	"+dis);
+		 //System.out.println();		  
 		//System.out.println("hello world	"); 
 		// System.out.println(dis);
 		// remove instances with missing class
@@ -452,5 +478,44 @@ public class IB1KIC extends Classifier implements UpdateableClassifier, Technica
 		// System.out.println("begin classify " );
 		// ibev.classifyInstance(ins.lastInstance());
 		// System.out.println("end classify " );
+*/	
+		 
+	
+	
 	}
+	
+	public double  fitness(Instances ins) throws Exception {
+		double right = 0;
+	    for(int k=0;k<ins.numInstances();k++){	    	
+	    	Instance in = ins.instance(k);
+	    	double[] classresult = ibkic.distributionForInstance(in);
+	    	for(int n =0;n<classresult.length;n++){
+	    		 //System.out.println("n ==	"+n+"kn=="+classresult[n]);
+	    	}
+	    	int index = 0;
+	    	double possibility = 0;
+	    	for(int m=0;m<classresult.length;m++){
+	    		if(classresult[m]>possibility){
+	    			index=m;
+	    			possibility =classresult[m]; 
+	    		}
+	    	}
+	    	double realvalue = in.classValue();
+	    	//System.out.println("index ==	"+index+"	realValue ==	"+realvalue);
+	    	if(index == realvalue ){
+	    		right++;
+	    		//System.out.println("right ==	"+right);
+	    	}
+	    }
+	    
+	    System.out.println("total right ==	"+right);
+	    System.out.println("number of instance ==	"+ins.numInstances());
+	    
+	    double ar = right/ins.numInstances();
+	    
+	    //System.out.println("ar ==	"+ar);
+	    return ar;
+	}
+
+
 }

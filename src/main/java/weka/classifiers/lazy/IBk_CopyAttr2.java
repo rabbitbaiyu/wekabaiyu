@@ -129,7 +129,7 @@ import java.util.Vector;
  * @author Eibe Frank (eibe@cs.waikato.ac.nz)
  * @version $Revision: 10069 $
  */
-public class IBk_Copynewcal extends Classifier implements OptionHandler, UpdateableClassifier, WeightedInstancesHandler,
+public class IBk_CopyAttr2 extends Classifier implements OptionHandler, UpdateableClassifier, WeightedInstancesHandler,
 		TechnicalInformationHandler, AdditionalMeasureProducer {
 
 	/** for serialization. */
@@ -204,7 +204,7 @@ public class IBk_Copynewcal extends Classifier implements OptionHandler, Updatea
 	 * @param k
 	 *            the number of nearest neighbors to use for prediction
 	 */
-	public IBk_Copynewcal(int k) {
+	public IBk_CopyAttr2(int k) {
 
 		init();
 		setKNN(k);
@@ -214,7 +214,7 @@ public class IBk_Copynewcal extends Classifier implements OptionHandler, Updatea
 	 * IB1 classifer. Instance-based learner. Predicts the class of the single
 	 * nearest training instance for each test instance.
 	 */
-	public IBk_Copynewcal() {
+	public IBk_CopyAttr2() {
 
 		init();
 	}
@@ -540,6 +540,7 @@ public class IBk_Copynewcal extends Classifier implements OptionHandler, Updatea
 
 		m_defaultModel = new ZeroR();
 		m_defaultModel.buildClassifier(instances);
+		m_defaultModel.setOptions(getOptions());
 		//System.out.println("hello world");
 
 	}
@@ -617,16 +618,22 @@ public class IBk_Copynewcal extends Classifier implements OptionHandler, Updatea
 		Instances neighbours = m_NNSearch.kNearestNeighbours(instance, m_kNN);
 		double[] distances = m_NNSearch.getDistances();
 		
-		for (int k = 0; k < distances.length; k++) {
+		//System.out.println("--------------classify instance--------- ");
+		//System.out.println(instance);
+		//System.out.println("--------------classify instance--------- ");
+		
+	/*	for (int k = 0; k < distances.length; k++) {
 			//System.out.println("-------");
 			//System.out.println("distance of "+k+"	"+distances[k]);
 			//System.out.println("instance of "+k+"	"+neighbours.instance(k));
 			distances[k] = distances[k]+0.1;
-			//System.out.println("------- after add 0.01");
+			//System.out.println("------- after add 0.1");
 			//System.out.println("distance of "+k+"	"+distances[k]);
-		}
+		}*/
 		
 		Instances instances = new Instances(m_Train);
+		double attrnum = instances.numAttributes();
+		//System.out.println("attrnum == "+attrnum);
 		instances.deleteWithMissingClass();
 
 		Instances newm_Train = new Instances(instances, 0, instances.numInstances());
@@ -637,9 +644,10 @@ public class IBk_Copynewcal extends Classifier implements OptionHandler, Updatea
 			Instance insk = neighbours.instance(k);
 			//System.out.println("instance "+k+"	"+neighbours.instance(k));
 			//System.out.println("-------");
-			double dis = distances[k];
+			//attrnum = Math.sqrt(attrnum);
+			double dis = distances[k]+(1/attrnum);
 			//System.out.println("dis		"+dis);
-			dis = 1/dis;
+			dis = (1/dis)*attrnum;
 			//System.out.println("1/dis		"+dis);
 			int weightnum = (int) dis; 
 			//System.out.println("weightnum		"+weightnum);
@@ -650,15 +658,15 @@ public class IBk_Copynewcal extends Classifier implements OptionHandler, Updatea
 			}
 		}
 		
-	/*	System.out.println("number of instances		"+newm_Train.numInstances());
+		//System.out.println("number of instances		"+newm_Train.numInstances());
 		
-		for (int k = 0; k < newm_Train.numInstances(); k++) {
+		/*  for (int k = 0; k < newm_Train.numInstances(); k++) {
 			System.out.println("-------");
 			System.out.println("instance "+k+"	"+newm_Train.instance(k));
 			System.out.println("-------");
 		}
 		
-		
+	/*
 		for (int k = 0; k < distances.length; k++) {
 			System.out.println("-------");
 			System.out.println("distance of "+k+"	"+distances[k]);
@@ -1134,7 +1142,7 @@ public class IBk_Copynewcal extends Classifier implements OptionHandler, Updatea
 		DataSource source = new DataSource(s);
 		Instances data = source.getDataSet();
 		// System.out.println(data);
-		System.out.println("**************");
+		//System.out.println("**************");
 		return data;
 	}
 
@@ -1146,32 +1154,33 @@ public class IBk_Copynewcal extends Classifier implements OptionHandler, Updatea
 	 * @throws Exception
 	 */
 	public static void main(String[] argv) throws Exception {
-		runClassifier(new IBk_Copynewcal(), argv);
+		runClassifier(new IBk_CopyAttr2(), argv);
 
-		/*String filepath ="F:/系统备份/weka-src/data/56Data/hypothyroid.arff";
-		//String filepath ="F:/系统备份/weka-src/data/weather.nominal1.arff";
+		/*String filepath ="F:/系统备份/weka-src/data/56Data/iris.arff";
+		//String filepath ="F:/系统备份/weka-src/data/weather.nominal.arff";
 		//String filepath = "/Users/rabbitbaiyu/git/wekabaiyu/data/labor.arff";
-		IBk_Copynewcal ib2 = new IBk_Copynewcal();
+		IBk_CopyAttr ib2 = new IBk_CopyAttr();
 		Instances ins = ib2.getinstance(filepath);
 		Instance inc2 = ins.instance(2);
 		//System.out.println(inc2);
 		Instance inc3 = ins.instance(3);
 		//System.out.println(inc3);
-		// System.out.println(ins);
-		System.out.println("----------");
+		//System.out.println(ins);
+		//System.out.println("----------");
 		ins.setClassIndex(ins.numAttributes() - 1);
-		System.out.println(ins);
+		//System.out.println(ins);
 		//ins.add(inc2);
-		System.out.println("---------- instance begin");
-		System.out.println(ins);
-		System.out.println("---------- instance end");
+		//System.out.println("---------- instance begin");
+		//System.out.println(ins);
+		//System.out.println("---------- instance end");
 		// double distance = ib2.distance(inc2, inc3);
 		// System.out.println("distance=="+distance);
 		ib2.buildClassifier(ins);
 		// ib2.buildClassifier(ins);
 		// ib2.classifyInstance(inc2);
-		System.out.println("---------- classify instance3 ");
-		System.out.println(inc3);
+		//System.out.println("classify instance ");
+		//System.out.println(inc3);
+		//System.out.println("classify instance ");
 		//System.out.println("---------- instance end");
 		double[] dis = ib2.distributionForInstance(inc3);
 
@@ -1179,7 +1188,7 @@ public class IBk_Copynewcal extends Classifier implements OptionHandler, Updatea
 		// System.out.println(dis);
 		for (int k = 0; k < dis.length; k++) {
 			System.out.println("distributtion "+k+"	:"+dis[k]);
-		}*/
+		}
 
 		// remove instances with missing class
 
@@ -1189,6 +1198,6 @@ public class IBk_Copynewcal extends Classifier implements OptionHandler, Updatea
 		// System.out.println("end classify " );
 
 		// runClassifier(new IB2(), argv);
-
+*/
 	}
 }
