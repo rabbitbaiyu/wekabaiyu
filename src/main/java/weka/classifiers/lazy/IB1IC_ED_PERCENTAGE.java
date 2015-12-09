@@ -280,14 +280,14 @@ public class IB1IC_ED_PERCENTAGE extends Classifier implements UpdateableClassif
 	    Instances train =  m_Train1.trainCV(2, 0);
 	    //System.out.println("train	"+train);
 	    
-	    System.out.println("------------------------------");
+	    //System.out.println("------------------------------");
 	    //Instances test1 =  m_Train1.trainCV(2, 2);
-	   // System.out.println("------------------------------");
+	    // System.out.println("------------------------------");
 	    
 	    Instances test =  m_Train1.trainCV(2, 1);
 	    //System.out.println("test	"+test);
-	   // System.out.println("------------------------------");
-	   // System.out.println("test1	"+test);
+	    // System.out.println("------------------------------");
+	    // System.out.println("test1	"+test);
 	   
 	    
 	    ibkic.buildClassifier(train);  
@@ -315,14 +315,41 @@ public class IB1IC_ED_PERCENTAGE extends Classifier implements UpdateableClassif
 	    	}
 	    }*/
 	    //double arrc = fitness(m_Train);
+	    
+	    
+	    //ibkic.setAttrfactor(0.5);
+	  	//System.out.println(+fitness(test));
+	  		
+	  	//ibkic.setAttrfactor(0.7);
+	  	//System.out.println(fitness(test));
 	    double [] fit = new double[idnumber];
+	    
+	    double numattri = m_Train.numAttributes();
+		//System.out.println("-------numattri		"+numattri);
+		numattri = Math.sqrt(numattri);
+		//System.out.println("------- after sqrt  "+numattri);
+		//double radom = Math.random();
+		//radom = (numattri-1)*radom+1;
+	    
 	      
 		for (int m = 1; m < idnumber; m++) {
-			ibkic.setAttrfactor(m);
+			//ibkic.setAttrfactor(m);
+			double radom = Math.random();
+			radom = (numattri-1)*radom+1;
+			double randomfactor = Math.random();
+			randomfactor = 99*randomfactor+1;
+			//double m1 = (m*0.1);
+			//System.out.println("radom		"+radom);
+			//System.out.println(m);
+			//System.out.println(m1);
+			ibkic.setThreshold(radom);
+			ibkic.setAttrfactor(randomfactor);
 			fit[m] = fitness(test);
+			//System.out.println("fitness	"		+fit[m]);
+			//System.out.println(radom+"	"+randomfactor+"	"+fit[m]);
+			System.out.println(fit[m]);
 		}
-		ibkic.setAttrfactor(0.5);
-		System.out.println("factor 0.5 ==	"+fitness(test));
+		
 	    //ibkic.setAttrfactor(1);
 	    //double ar = fitness(m_Train);
 	    
@@ -332,9 +359,12 @@ public class IB1IC_ED_PERCENTAGE extends Classifier implements UpdateableClassif
 	    //System.out.println("***********************************"+ar);
 	    
 	    
-	    for(int k=0;k<fit.length;k++){
-	    	System.out.println("fit ==	"+k+"   "+fit[k]);
-	    }
+/*	    for(int k=1;k<fit.length;k++){
+	    	//System.out.println("fit ==	"+k+"   "+fit[k]);
+	    	  System.out.println(fit[k]);
+	    }*/
+	    
+	  
 	    
 	    //System.out.println("total right ==	"+right);
 	    //System.out.println("number of instance ==	"+instances.numInstances());
@@ -462,7 +492,7 @@ public class IB1IC_ED_PERCENTAGE extends Classifier implements UpdateableClassif
 		 
 		 
 		 String filepath ="F:/系统备份/weka-src/data/56Data/anneal.arff";
-		 //String filepath ="F:/系统备份/weka-src/data/weather.nominal1.arff";
+		 //String filepath ="F:/系统备份/weka-src/data/weather.nominal.arff";
 		 IB1IC_ED_PERCENTAGE ib2 = new IB1IC_ED_PERCENTAGE(); 
 		 Instances ins =ib2.getinstance(filepath); 
 		 Instance inc2 = ins.instance(2);
@@ -506,6 +536,7 @@ public class IB1IC_ED_PERCENTAGE extends Classifier implements UpdateableClassif
 		double right = 0;
 	    for(int k=0;k<ins.numInstances();k++){	    	
 	    	Instance in = ins.instance(k);
+	    	//System.out.println("classify instance ==	"+in);
 	    	double[] classresult = ibkic.distributionForInstance(in);
 	    	for(int n =0;n<classresult.length;n++){
 	    		 //System.out.println("n ==	"+n+"kn=="+classresult[n]);

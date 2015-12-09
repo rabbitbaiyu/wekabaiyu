@@ -331,8 +331,8 @@ public class IB1_Evlution extends Classifier implements UpdateableClassifier, Te
 			//print_fittness(fitness);
 			int label = choose_the_best(fitness);
 			bestinsvec = population[label];		
-			//System.out.println("------------bestinstance-----------------");
-			//printinstancerandom(bestinsvec);
+			System.out.println("------------bestinstance-----------------");
+			printinstancerandom(bestinsvec);
 			//System.out.println("bestfitness		"+	i +"	"+fitness[label]);
 			//System.out.println(fitness[label]);
 			Instancevector [] newpopulation = evolution(population,label);

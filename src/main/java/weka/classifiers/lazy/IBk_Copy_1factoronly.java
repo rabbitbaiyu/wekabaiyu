@@ -129,7 +129,7 @@ import java.util.Vector;
  * @author Eibe Frank (eibe@cs.waikato.ac.nz)
  * @version $Revision: 10069 $
  */
-public class IBk_Copy extends Classifier implements OptionHandler, UpdateableClassifier, WeightedInstancesHandler,
+public class IBk_Copy_1factoronly extends Classifier implements OptionHandler, UpdateableClassifier, WeightedInstancesHandler,
 		TechnicalInformationHandler, AdditionalMeasureProducer {
 
 	/** for serialization. */
@@ -147,19 +147,7 @@ public class IBk_Copy extends Classifier implements OptionHandler, UpdateableCla
 	/** The number of neighbours to use for classification (currently). */
 	protected int m_kNN;
 	
-	/** The factor to control the number to copy the instance  */
-	protected double attrfactor = 10;
-	
-	/** The factor to control the threshold to copy the instance or not */
-	protected double threshold = 0.1;
-
-	public double getThreshold() {
-		return threshold;
-	}
-
-	public void setThreshold(double threshold) {
-		this.threshold = threshold;
-	}
+	protected double attrfactor;
 
 	/**
 	 * The value of kNN provided by the user. This may differ from m_kNN if
@@ -218,7 +206,7 @@ public class IBk_Copy extends Classifier implements OptionHandler, UpdateableCla
 	 * @param k
 	 *            the number of nearest neighbors to use for prediction
 	 */
-	public IBk_Copy(int k) {
+	public IBk_Copy_1factoronly(int k) {
 
 		init();
 		setKNN(k);
@@ -228,7 +216,7 @@ public class IBk_Copy extends Classifier implements OptionHandler, UpdateableCla
 	 * IB1 classifer. Instance-based learner. Predicts the class of the single
 	 * nearest training instance for each test instance.
 	 */
-	public IBk_Copy() {
+	public IBk_Copy_1factoronly() {
 
 		init();
 	}
@@ -604,8 +592,8 @@ public class IBk_Copy extends Classifier implements OptionHandler, UpdateableCla
 	public double[] distributionForInstance(Instance instance) throws Exception {
 			
 		NaiveBayes nb = new NaiveBayes();
-		int numins = m_Train.numInstances();
-		//System.out.println("number of  instances		"+m_Train.numInstances());
+		
+		
 		
 		//System.out.println("----------attrfactor----"+attrfactor);
 		
@@ -655,56 +643,35 @@ public class IBk_Copy extends Classifier implements OptionHandler, UpdateableCla
 		instances.deleteWithMissingClass();
 
 		Instances newm_Train = new Instances(instances, 0, instances.numInstances());
-		//double numattri = m_Train.numAttributes();
-		//System.out.println("-------numattri		"+numattri);
-		//numattri = Math.sqrt(numattri);
-		//System.out.println("------- after sqrt  "+numattri);
-		//double thresholdvalue = numattri*threshold;
-		//System.out.println("------- threshold  "+threshold);
-		//System.out.println("------- thresholdvalue	"+thresholdvalue);
 		
-		
-/*		for (int k = 0; k < distances.length; k++) {
-			System.out.println("-------");
-			System.out.println("distance of "+k+"	"+distances[k]);
-			System.out.println("-------");
-		}
-		*/
-		
-		//System.out.println("-------threshold   "+threshold);
-		for (int k = 0; k < neighbours.numInstances(); k++) {
-			// System.out.println("-------");
-			// Instance in = new Instance();
+		for (int k = 0; k <neighbours.numInstances(); k++) {
+			//System.out.println("-------");
+			//Instance in = new Instance();
 			Instance insk = neighbours.instance(k);
-			// System.out.println("instance "+k+" "+neighbours.instance(k));
-			// System.out.println("-------");
-			// attrfactor = 10;
-			// System.out.println("----------attrfactor----"+attrfactor);
-
-			if (distances[k] < threshold) {
-				double dis = distances[k] + (1 / attrfactor);
-				// System.out.println("dis "+dis);
-				dis = (1 / dis) * attrfactor;
-				// System.out.println("1/dis "+dis);
-				int weightnum = (int) dis;
-				// System.out.println("weightnum "+weightnum);
-
-				for (int s = 0; s < weightnum; s++) {
-
-					newm_Train.add(insk);
-				}
+			//System.out.println("instance "+k+"	"+neighbours.instance(k));
+			//System.out.println("-------");
+			//attrfactor = 10;
+			//System.out.println("----------attrfactor----"+attrfactor);
+			double dis = distances[k]+(1/attrfactor);
+			//System.out.println("dis		"+dis);
+			dis = (1/dis)*attrfactor;
+			//System.out.println("1/dis		"+dis);
+			int weightnum = (int) dis; 
+			//System.out.println("weightnum		"+weightnum);
+			
+			for(int s=0;s<weightnum;s++){
+				
+				newm_Train.add(insk);
 			}
 		}
 		
-		  //System.out.println("number of new instances		"+newm_Train.numInstances());
+		//System.out.println("number of instances		"+newm_Train.numInstances());
 		
-/*		  for (int k = 0; k < newm_Train.numInstances(); k++) {
+		/*  for (int k = 0; k < newm_Train.numInstances(); k++) {
 			System.out.println("-------");
 			System.out.println("instance "+k+"	"+newm_Train.instance(k));
 			System.out.println("-------");
-		}*/
-		
-		
+		}
 		
 	/*
 		for (int k = 0; k < distances.length; k++) {
@@ -1202,7 +1169,7 @@ public class IBk_Copy extends Classifier implements OptionHandler, UpdateableCla
 	 * @throws Exception
 	 */
 	public static void main(String[] argv) throws Exception {
-		runClassifier(new IBk_Copy(), argv);
+		runClassifier(new IBk_Copy_1factoronly(), argv);
 
 		/*String filepath ="F:/系统备份/weka-src/data/56Data/spectrometer.arff";
 		//String filepath ="F:/系统备份/weka-src/data/weather.nominal.arff";
