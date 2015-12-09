@@ -106,7 +106,7 @@ public class IB1IC_facor_threshold extends Classifier implements UpdateableClass
 
 	private int Maxgen=5;
 	
-	private double randomfactor;
+	//private double randomfactor;
 	
 	private double CR = 0.5;
 	
@@ -638,7 +638,7 @@ public class IB1IC_facor_threshold extends Classifier implements UpdateableClass
 		
 		for(int i = 0;i<idnumber;i++){
 			
-			 randomfactor = 0.9*random.nextDouble()+0.1;
+			 double randomfactor = 0.9*random.nextDouble()+0.1;
 			 //System.out.println("------------randomfactor		"+randomfactor);
 			 //randomfactor = 1;		
 			 randominti = random.nextInt(idnumber);			 
@@ -1079,11 +1079,11 @@ private double instancecross(double first,double second){
 	 */
 	public static void main(String[] argv) throws Exception {
 			
-		 //runClassifier(new IB1IC_facor_threshold(), argv);
+		 runClassifier(new IB1IC_facor_threshold(), argv);
 		 
 		 
 		 
-		 String filepath ="F:/系统备份/weka-src/data/56Data/artificial-characters.arff";
+/*		 String filepath ="F:/系统备份/weka-src/data/56Data/artificial-characters.arff";
 		 //String filepath ="F:/系统备份/weka-src/data/weather.nominal.arff";
 		 IB1IC_facor_threshold ib2 = new IB1IC_facor_threshold(); 
 		 Instances ins =ib2.getinstance(filepath); 
@@ -1094,6 +1094,8 @@ private double instancecross(double first,double second){
 		 // System.out.println(ins);
 		 //System.out.println("----------");
 		 ins.setClassIndex(ins.numAttributes() - 1); 
+		 ib2.buildClassifier(ins); 
+		 ib2.distributionForInstance(inc2);*/
 		 
 		 
 /*		 ins.stratify(10);
@@ -1125,8 +1127,7 @@ private double instancecross(double first,double second){
 		 //System.out.println("---------- instance begin");
 		 //System.out.println(ins); 
 		 //System.out.println("---------- instance end"); 
-		 ib2.buildClassifier(ins); 
-		 ib2.distributionForInstance(inc2);
+		
 		 //double distance = ib2.distance(inc2, inc3); 
 		 //System.out.println("distance=="+distance); 
 		 //ib2.buildClassifier(ins);
