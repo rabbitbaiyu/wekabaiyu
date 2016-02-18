@@ -151,7 +151,7 @@ public class IBk_Copy extends Classifier implements OptionHandler, UpdateableCla
 	protected double attrfactor = 10;
 	
 	/** The factor to control the threshold to copy the instance or not */
-	protected double threshold = 0.1;
+	protected double threshold = 1;
 
 	public double getThreshold() {
 		return threshold;
@@ -650,11 +650,11 @@ public class IBk_Copy extends Classifier implements OptionHandler, UpdateableCla
 			//System.out.println("distance of "+k+"	"+distances[k]);
 		}
 		*/
-		Instances instances = new Instances(m_Train);
+		//Instances instances = new Instances(m_Train);
 		//int attrnum = instances.numAttributes();
-		instances.deleteWithMissingClass();
+		//instances.deleteWithMissingClass();
 
-		Instances newm_Train = new Instances(instances, 0, instances.numInstances());
+		Instances newm_Train = new Instances(m_Train, 0, m_Train.numInstances());
 		//double numattri = m_Train.numAttributes();
 		//System.out.println("-------numattri		"+numattri);
 		//numattri = Math.sqrt(numattri);
@@ -715,6 +715,9 @@ public class IBk_Copy extends Classifier implements OptionHandler, UpdateableCla
 		
 		nb.buildClassifier(newm_Train);
 		double [] dis = nb.distributionForInstance(instance);
+		newm_Train = null;
+		System.gc();
+		
 		//double[] distribution = makeDistribution(neighbours, distances);
 		return dis;
 		//return distribution;
