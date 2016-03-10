@@ -342,7 +342,7 @@ public class IB1IC_facor_threshold2 extends Classifier implements UpdateableClas
 			//print_fittness(fitness);
 			//System.out.println("count	" + count);
 			int label = choose_the_best(fitness);
-			//System.out.println("label	" + label+"		"+fitness[label]);
+			System.out.println("count  "+count+"	label	" + label+"		"+fitness[label]);
 			Instancevector [] newpopulation = evolution(population,label);
 			//System.out.println("444");
 			//System.out.println("------------begin population-----------------");
@@ -1097,11 +1097,11 @@ private double instancecross(double first,double second){
 	 */
 	public static void main(String[] argv) throws Exception {
 			
-		 //runClassifier(new IB1IC_facor_threshold(), argv);
+		 runClassifier(new IB1IC_facor_threshold2(), argv);
 		 
 		 
 		 
-		 String filepath ="F:/系统备份/weka-src/data/56Data/splice.arff";
+		 /*String filepath ="F:/系统备份/weka-src/data/56Data/iris.arff";
 		 //String filepath ="F:/系统备份/weka-src/data/weather.nominal.arff";
 		 IB1IC_facor_threshold2 ib2 = new IB1IC_facor_threshold2(); 
 		 Instances ins =ib2.getinstance(filepath); 
@@ -1112,7 +1112,7 @@ private double instancecross(double first,double second){
 		 // System.out.println(ins);
 		 //System.out.println("----------");
 		 ins.setClassIndex(ins.numAttributes() - 1); 
-		 ib2.buildClassifier(ins); 
+		 ib2.buildClassifier(ins); */
 		 //ib2.distributionForInstance(inc2);
 		 
 		 

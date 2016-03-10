@@ -104,7 +104,7 @@ public class IB1IC_facor_threshold extends Classifier implements UpdateableClass
 	
 	private int idnumber=10;
 
-	private int Maxgen=5;
+	private int Maxgen=50;
 	
 	//private double randomfactor;
 	
@@ -112,7 +112,7 @@ public class IB1IC_facor_threshold extends Classifier implements UpdateableClass
 	
 	private int numberoffactor = 2;
 	
-	private double maxfactor = 20;
+	private double maxfactor = 10;
 	
 	private double minfactor = 1;
 	
@@ -296,30 +296,30 @@ public class IB1IC_facor_threshold extends Classifier implements UpdateableClass
 	    
 	    ibkic = new  IBk_Copy();
 	    
-	    Instances m_Train1 = new Instances(instances, 0, instances.numInstances());
+	    //Instances m_Train1 = new Instances(instances, 0, instances.numInstances());
 	    
-	    m_Train1.stratify(10);
-	    Instances train =  m_Train1.trainCV(10, 0);
+	    m_Train.stratify(10);
+	    Instances train =  m_Train.trainCV(10, 0);
 	    //System.out.println("train	"+train);
 	    
 	    //System.out.println("------------------------------");
 	    //Instances test1 =  m_Train1.trainCV(2, 2);
 	    // System.out.println("------------------------------");
 	    
-	    Instances test =  m_Train1.testCV(10, 0);
+	    Instances test =  m_Train.testCV(10, 0);
 	    //System.out.println("test	"+test);
 	    // System.out.println("------------------------------");
 	    // System.out.println("test1	"+test);
 	   
-	    System.out.println("111");
+	    //System.out.println("111");
 	    ibkic.buildClassifier(train);  
-	    System.out.println("222");
+	    //System.out.println("222");
 	    
 	    
 	    Instancevector [] population;
 	    //System.out.println("population.length	"+population.length);
 	    population = randominstance();
-	    System.out.println("222");
+	    //System.out.println("222");
 	   
 	    //System.out.println("population.length	"+population.length);
 	    //printpopulation(population);
@@ -330,6 +330,7 @@ public class IB1IC_facor_threshold extends Classifier implements UpdateableClass
 	    //fitness   = caculate_fittness(population,test);
 	    //printpopulation(population);
 	    //print_fittness(fitness);
+	    int count=0;
 	    
 	    
 	    for(int i = 0;i<Maxgen;i++){
@@ -337,12 +338,13 @@ public class IB1IC_facor_threshold extends Classifier implements UpdateableClass
 			//printpopulation(population);
 			//System.out.println("------------end population-----------------");
 			fitness   = caculate_fittness(population,test);
-			System.out.println("333");
+			//System.out.println("333");
 			//print_fittness(fitness);
+			//System.out.println("count	" + count);
 			int label = choose_the_best(fitness);
 			System.out.println("label	" + label+"		"+fitness[label]);
 			Instancevector [] newpopulation = evolution(population,label);
-			System.out.println("444");
+			//System.out.println("444");
 			//System.out.println("------------begin population-----------------");
 			//printpopulation(population);
 			//System.out.println("------------end population-----------------");
@@ -350,18 +352,18 @@ public class IB1IC_facor_threshold extends Classifier implements UpdateableClass
 			//printpopulation(newpopulation);
 			//System.out.println("------------end new  population-----------------");
 			Instancevector [] crosspopulation = cross(population,newpopulation);
-			System.out.println("555");
+			//System.out.println("555");
 			//System.out.println("------------begin crosspopulation population-----------------");
 			//printpopulation(crosspopulation);
 			//System.out.println("------------end   crosspopulation  population-----------------");
 			double cross_fitness [] = caculate_fittness(crosspopulation,test);
-			System.out.println("666");
+			//System.out.println("666");
 			//System.out.println("------------fitness-----------------");
 			//print_fittness(fitness);
 			//System.out.println("------------crossfitness-----------------");
 			//print_fittness(cross_fitness);
 			Instancevector [] evlutionpopulation =  evlutionpopulation(population,crosspopulation,fitness,cross_fitness);
-			System.out.println("777");
+			//System.out.println("777");
 			population = evlutionpopulation;		
 			//System.out.println("------------begin evlutionpopulation-----------------");
 			//printpopulation(evlutionpopulation);
@@ -387,6 +389,7 @@ public class IB1IC_facor_threshold extends Classifier implements UpdateableClass
 			//print_fittness(cross_fitness);
 			//Instancevector [] evlutionpopulation =  evlutionpopulation(population,crosspopulation,fitness,cross_fitness);
 			//population = evlutionpopulation;
+			count++;
 
 					
 		}
@@ -399,6 +402,8 @@ public class IB1IC_facor_threshold extends Classifier implements UpdateableClass
 		//System.out.println("label	" + label+"		"+population[label]);
 		final_a = population[label].getInsv()[0];
 		final_b = population[label].getInsv()[1];
+		
+		
 		
 		
 		//System.out.println("final_a	" + final_a+"		");
@@ -638,10 +643,13 @@ public class IB1IC_facor_threshold extends Classifier implements UpdateableClass
 		
 		for(int i = 0;i<idnumber;i++){
 			
-			 double randomfactor = 0.9*random.nextDouble()+0.1;
+			 double randomfactor = 1;
 			 //System.out.println("------------randomfactor		"+randomfactor);
 			 //randomfactor = 1;		
-			 randominti = random.nextInt(idnumber);			 
+			 randominti = random.nextInt(idnumber);	
+			 while(randominti == bestlabel){
+				 randominti = random.nextInt(idnumber);			 
+			 }
 			 //System.out.println("------------bestinstance--------------------");
 			 //printinstancerandom(bestinsvec);
 			 //System.out.println("------------randominti			"+randominti);
@@ -651,7 +659,15 @@ public class IB1IC_facor_threshold extends Classifier implements UpdateableClass
 			 //System.out.println("------------addresult---------------------");
 			 //printinstancerandom(insvecti);		 
 			 randomintj = random.nextInt(idnumber);
-			 //System.out.println("------------randomintj		"+randomintj);
+			 while(randominti == randomintj||bestlabel == randomintj){
+				 randomintj = random.nextInt(idnumber);			 
+			 }
+		
+			 
+			//System.out.println("------------bestlabel		"+bestlabel);
+			//System.out.println("------------randominti		"+randominti);
+			//System.out.println("------------randomintj--------------------");
+			//System.out.println("------------randomintj		"+randomintj);
 			 //System.out.println("------------randomintj--------------------");
 			 //printinstancerandom(population[randomintj]);
 			 insvectestj = instancevectorsub(population[randominti],population[randomintj],randomfactor);
@@ -860,8 +876,8 @@ private double instancecross(double first,double second){
 		
 		ibkic.setThreshold(final_a);
 		ibkic.setAttrfactor(final_b);
-		System.out.println("***********************"+final_a);
-		System.out.println("***********************"+final_b);
+		//System.out.println("***********************"+final_a);
+		//System.out.println("***********************"+final_b);
 		
 		
 		return ibkic.distributionForInstance(instance);
@@ -911,7 +927,9 @@ private double instancecross(double first,double second){
 			insvec = new Instancevector(numberoffactor);
 			double radom = Math.random();
 			radom = (numattri-1)*radom+1;
+			// radom [1,numattri]
 			double randomfactor = Math.random();
+			// radomfactor [n of copied instances]
 			randomfactor = (maxfactor-minfactor)*randomfactor+minfactor;
 			//population[m][0]= radom;
 			insvec.getInsv()[0] = radom;
@@ -1079,11 +1097,11 @@ private double instancecross(double first,double second){
 	 */
 	public static void main(String[] argv) throws Exception {
 			
-		 runClassifier(new IB1IC_facor_threshold(), argv);
+		 //runClassifier(new IB1IC_facor_threshold(), argv);
 		 
 		 
 		 
-/*		 String filepath ="F:/系统备份/weka-src/data/56Data/artificial-characters.arff";
+		 String filepath ="F:/系统备份/weka-src/data/56Data/splice.arff";
 		 //String filepath ="F:/系统备份/weka-src/data/weather.nominal.arff";
 		 IB1IC_facor_threshold ib2 = new IB1IC_facor_threshold(); 
 		 Instances ins =ib2.getinstance(filepath); 
@@ -1095,7 +1113,7 @@ private double instancecross(double first,double second){
 		 //System.out.println("----------");
 		 ins.setClassIndex(ins.numAttributes() - 1); 
 		 ib2.buildClassifier(ins); 
-		 ib2.distributionForInstance(inc2);*/
+		 //ib2.distributionForInstance(inc2);
 		 
 		 
 /*		 ins.stratify(10);
