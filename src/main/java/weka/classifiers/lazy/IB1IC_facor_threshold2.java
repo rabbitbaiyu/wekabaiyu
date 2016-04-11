@@ -1101,7 +1101,7 @@ private double instancecross(double first,double second){
 		 
 		 
 		 
-		 /*String filepath ="F:/系统备份/weka-src/data/56Data/iris.arff";
+		 String filepath ="F:/系统备份/weka-src/data/56Data/spilce.arff";
 		 //String filepath ="F:/系统备份/weka-src/data/weather.nominal.arff";
 		 IB1IC_facor_threshold2 ib2 = new IB1IC_facor_threshold2(); 
 		 Instances ins =ib2.getinstance(filepath); 
@@ -1112,7 +1112,7 @@ private double instancecross(double first,double second){
 		 // System.out.println(ins);
 		 //System.out.println("----------");
 		 ins.setClassIndex(ins.numAttributes() - 1); 
-		 ib2.buildClassifier(ins); */
+		 ib2.buildClassifier(ins); 
 		 //ib2.distributionForInstance(inc2);
 		 
 		 

@@ -1101,7 +1101,7 @@ private double instancecross(double first,double second){
 		 
 		 
 		 
-		 String filepath ="F:/系统备份/weka-src/data/56Data/splice.arff";
+		 String filepath ="F:/系统备份/weka-src/data/56Data/hypothyroid.arff";
 		 //String filepath ="F:/系统备份/weka-src/data/weather.nominal.arff";
 		 IB1IC_facor_threshold ib2 = new IB1IC_facor_threshold(); 
 		 Instances ins =ib2.getinstance(filepath); 
