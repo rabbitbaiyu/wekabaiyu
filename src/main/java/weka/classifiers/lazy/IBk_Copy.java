@@ -632,7 +632,7 @@ public class IBk_Copy extends Classifier implements OptionHandler, UpdateableCla
 		}
 
 		m_NNSearch.addInstanceInfo(instance);
-		m_kNN = 1000;
+		m_kNN = 100;
 		Instances neighbours = m_NNSearch.kNearestNeighbours(instance, m_kNN);
 		double[] distances = m_NNSearch.getDistances();
 		
@@ -687,6 +687,9 @@ public class IBk_Copy extends Classifier implements OptionHandler, UpdateableCla
 				dis = (1 / dis) * attrfactor;
 				// System.out.println("1/dis "+dis);
 				int weightnum = (int) dis;
+				if(weightnum > 25){
+					weightnum = 25;
+				}
 				// System.out.println("weightnum "+weightnum);
 
 				for (int s = 0; s < weightnum; s++) {
