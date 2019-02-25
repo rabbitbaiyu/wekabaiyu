@@ -1097,22 +1097,22 @@ private double instancecross(double first,double second){
 	 */
 	public static void main(String[] argv) throws Exception {
 			
-		 //runClassifier(new IB1IC_facor_threshold(), argv);
+		runClassifier(new IB1IC_facor_threshold(), argv);
 		 
 		 
 		 
-		 String filepath ="F:/系统备份/weka-src/data/56Data/iris.arff";
-		 //String filepath ="F:/系统备份/weka-src/data/weather.nominal.arff";
-		 IB1IC_facor_threshold ib2 = new IB1IC_facor_threshold(); 
-		 Instances ins =ib2.getinstance(filepath); 
-		 Instance inc2 = ins.instance(2);
+		 //String filepath ="C:/git/wekabaiyu/data/iris.arff";
+		 //String filepath ="F:/系统锟斤拷锟斤拷/weka-src/data/weather.nominal.arff";
+		 //IB1IC_facor_threshold ib2 = new IB1IC_facor_threshold(); 
+		 //Instances ins =ib2.getinstance(filepath); 
+		 //Instance inc2 = ins.instance(2);
 		 //System.out.println(inc2); 
 		 //Instance inc1 = ins.instance(1);
 		 //System.out.println(inc3); 
 		 // System.out.println(ins);
 		 //System.out.println("----------");
-		 ins.setClassIndex(ins.numAttributes() - 1); 
-		 ib2.buildClassifier(ins); 
+		 //ins.setClassIndex(ins.numAttributes() - 1); 
+		 //ib2.buildClassifier(ins); 
 		 //ib2.distributionForInstance(inc2);
 		 
 		 

@@ -150,7 +150,7 @@ public class IBk_Copy extends Classifier implements OptionHandler, UpdateableCla
 	/** The factor to control the number to copy the instance  */
 	protected double attrfactor = 10;
 	
-	/** The factor to control the threshold to copy the instance or not */
+	/** The threshold to control the distance to copy the instance or not */
 	protected double threshold = 1;
 
 	public double getThreshold() {
@@ -632,7 +632,7 @@ public class IBk_Copy extends Classifier implements OptionHandler, UpdateableCla
 		}
 
 		m_NNSearch.addInstanceInfo(instance);
-		m_kNN = 100;
+		m_kNN = 3;
 		Instances neighbours = m_NNSearch.kNearestNeighbours(instance, m_kNN);
 		double[] distances = m_NNSearch.getDistances();
 		
@@ -687,8 +687,8 @@ public class IBk_Copy extends Classifier implements OptionHandler, UpdateableCla
 				dis = (1 / dis) * attrfactor;
 				// System.out.println("1/dis "+dis);
 				int weightnum = (int) dis;
-				if(weightnum > 25){
-					weightnum = 25;
+				if(weightnum > 3){
+					weightnum = 3;
 				}
 				// System.out.println("weightnum "+weightnum);
 
@@ -1210,8 +1210,8 @@ public class IBk_Copy extends Classifier implements OptionHandler, UpdateableCla
 	public static void main(String[] argv) throws Exception {
 		runClassifier(new IBk_Copy(), argv);
 
-		/*String filepath ="F:/系统备份/weka-src/data/56Data/spectrometer.arff";
-		//String filepath ="F:/系统备份/weka-src/data/weather.nominal.arff";
+		/*String filepath ="F:/系统锟斤拷锟斤拷/weka-src/data/56Data/spectrometer.arff";
+		//String filepath ="F:/系统锟斤拷锟斤拷/weka-src/data/weather.nominal.arff";
 		//String filepath = "/Users/rabbitbaiyu/git/wekabaiyu/data/labor.arff";
 		IBk_Copy ib2 = new IBk_Copy();
 		Instances ins = ib2.getinstance(filepath);
