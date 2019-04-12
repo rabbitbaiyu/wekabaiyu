@@ -47,6 +47,8 @@ import weka.core.TechnicalInformation.Type;
 import weka.core.converters.ConverterUtils.DataSource;
 import weka.core.AdditionalMeasureProducer;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Vector;
 
@@ -632,29 +634,48 @@ public class IBk_Copy extends Classifier implements OptionHandler, UpdateableCla
 		}
 
 		m_NNSearch.addInstanceInfo(instance);
-		m_kNN = 3;
 		Instances neighbours = m_NNSearch.kNearestNeighbours(instance, m_kNN);
 		double[] distances = m_NNSearch.getDistances();
+		
+		
+		System.out.println("--------------distance--------- ");
+		printdistance(distances);
+		System.out.println("--------------distance--------- ");
+		double[] distancesNormalized = Standardlization(distances);
+		
+		System.out.println("--------------distancesNormalized--------- ");
+		printdistance(distancesNormalized);
+		System.out.println("--------------distancesNormalized--------- ");
+		
+		
+		
 		
 		//System.out.println("--------------classify instance--------- ");
 		//System.out.println("neighbours.numInstances"+neighbours.numInstances());
 		//System.out.println("distances.length"+distances.length);
 		//System.out.println("--------------classify instance--------- ");
-		
-	/*	for (int k = 0; k < distances.length; k++) {
-			//System.out.println("-------");
+		/*
+		System.out.println("Before Copy begin ----------------------------------------------");
+		System.out.println("NumOfInstances Before Copy "+distances.length);
+		for (int k = 0; k < neighbours.numInstances(); k++) {
+			
 			//System.out.println("distance of "+k+"	"+distances[k]);
-			//System.out.println("instance of "+k+"	"+neighbours.instance(k));
+			System.out.println("instance of "+k+"	"+neighbours.instance(k));
 			//distances[k] = distances[k]+0.1;
+			//System.out.println("------- ");
 			//System.out.println("------- after add 0.1");
 			//System.out.println("distance of "+k+"	"+distances[k]);
 		}
+		
+		
+		System.out.println("Before Copy  end------------------------------------------------------ ");
 		*/
 		//Instances instances = new Instances(m_Train);
 		//int attrnum = instances.numAttributes();
 		//instances.deleteWithMissingClass();
 
-		Instances newm_Train = new Instances(m_Train, 0, m_Train.numInstances());
+		//Instances newm_Train = new Instances(m_Train, 0, m_Train.numInstances());
+		Instances newm_Train = new Instances(neighbours, 0, neighbours.numInstances());
 		//double numattri = m_Train.numAttributes();
 		//System.out.println("-------numattri		"+numattri);
 		//numattri = Math.sqrt(numattri);
@@ -676,16 +697,21 @@ public class IBk_Copy extends Classifier implements OptionHandler, UpdateableCla
 			// System.out.println("-------");
 			// Instance in = new Instance();
 			Instance insk = neighbours.instance(k);
-			// System.out.println("instance "+k+" "+neighbours.instance(k));
+			//insk.
+			System.out.println("instance "+k+" "+neighbours.instance(k));
+			
+			//Instance insk1 = 0.5*insk；
 			// System.out.println("-------");
 			// attrfactor = 10;
 			// System.out.println("----------attrfactor----"+attrfactor);
 
 			if (distances[k] < threshold) {
+				System.out.println("distance "+k+"  "+distances[k]);
+				System.out.println("attrfactor   "+attrfactor);
 				double dis = distances[k] + (1 / attrfactor);
-				// System.out.println("dis "+dis);
+				//System.out.println("dis "+dis);
 				dis = (1 / dis) * attrfactor;
-				// System.out.println("1/dis "+dis);
+				System.out.println("NumberOfCopy "+dis);
 				int weightnum = (int) dis;
 				if(weightnum > 3){
 					weightnum = 3;
@@ -696,7 +722,27 @@ public class IBk_Copy extends Classifier implements OptionHandler, UpdateableCla
 
 					newm_Train.add(insk);
 				}
+				
+				/*
+				System.out.println("After COPY begin----------------------------------------");
+				System.out.println("NumOfInstances after Copy "+ newm_Train.numInstances());
+				for (int m = 0; m < newm_Train.numInstances(); m++) {
+					//System.out.println("After-------");
+					//System.out.println("distance of "+k+"	"+distances[k]);
+					System.out.println("instance of "+m+"	"+ newm_Train.instance(m));
+					//distances[k] = distances[k]+0.1;
+					
+					//System.out.println("------- after add 0.1");
+					//System.out.println("distance of "+k+"	"+distances[k]);
+				}
+				
+				System.out.println("After Copy  end-----------------------------------");
+				*/
+				
+								
 			}
+			
+					
 		}
 		
 		  //System.out.println("number of new instances		"+newm_Train.numInstances());
@@ -716,6 +762,23 @@ public class IBk_Copy extends Classifier implements OptionHandler, UpdateableCla
 			System.out.println("-------");
 		}*/
 		
+		
+		/*
+		System.out.println(" Final After COPY begin----------------------------------------");
+		System.out.println("NumOfInstances after Copy "+ newm_Train.numInstances());
+		for (int m = 0; m < newm_Train.numInstances(); m++) {
+			//System.out.println("After-------");
+			//System.out.println("distance of "+k+"	"+distances[k]);
+			System.out.println("instance of "+m+"	"+ newm_Train.instance(m));
+			//distances[k] = distances[k]+0.1;
+			
+			//System.out.println("------- after add 0.1");
+			//System.out.println("distance of "+k+"	"+distances[k]);
+		}
+		
+		System.out.println("Final  After Copy  end-----------------------------------");
+		*/
+		
 		nb.buildClassifier(newm_Train);
 		double [] dis = nb.distributionForInstance(instance);
 		newm_Train = null;
@@ -726,6 +789,39 @@ public class IBk_Copy extends Classifier implements OptionHandler, UpdateableCla
 		//return distribution;
 	}
 
+	
+	public double [] Standardlization(double [] original) {
+		
+		//double min = (double) Collections.min(Arrays.asList(original));
+		//double max = (double) Collections.max(Arrays.asList(original));
+		
+		double [] AfterNormalization = new double[original.length];
+		double min = original[0];
+		double max = original[original.length-1];
+		double range = max-min;
+		System.out.println("MIN: " + min);
+        System.out.println("MAX: " + max);
+		
+		
+		
+		for (int i=0;i<original.length;i++) {
+			AfterNormalization[i] = (original[i]-min)/range;
+		}
+		
+		return  AfterNormalization;
+		
+	}
+	
+	
+	
+	public void printdistance(double [] original) {
+		
+		for (int i=0;i<original.length;i++) {
+			System.out.println("The " +i + "th distanct" +original[i]);
+		}
+	}
+	
+	
 	public double getAttrfactor() {
 		return attrfactor;
 	}

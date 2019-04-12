@@ -1110,7 +1110,7 @@ private double instancecross(double first,double second){
 		 //Instance inc1 = ins.instance(1);
 		 //System.out.println(inc3); 
 		 // System.out.println(ins);
-		 //System.out.println("----------");
+		 //System.out.println("----------");IB1IC_facor_refine_accuracy_for_rare_class.java
 		 //ins.setClassIndex(ins.numAttributes() - 1); 
 		 //ib2.buildClassifier(ins); 
 		 //ib2.distributionForInstance(inc2);

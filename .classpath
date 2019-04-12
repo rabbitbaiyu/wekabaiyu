@@ -1,10 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="src/main/java"/>
 	<classpathentry kind="src" path="src/test/java"/>
+	<classpathentry kind="src" path="src/main/java"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
+		<attributes>
+			<attribute name="module" value="true"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="lib" path="lib/java-cup.jar"/>
 	<classpathentry kind="lib" path="lib/JFlex.jar"/>
 	<classpathentry kind="lib" path="lib/junit.jar"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="C:/Users/z3523442/.m2/repository/nz/ac/waikato/cms/weka/weka-stable/3.8.3/weka-stable-3.8.3.jar" sourcepath="C:/Users/z3523442/.m2/repository/nz/ac/waikato/cms/weka/weka-stable/3.8.3/weka-stable-3.8.3-sources.jar">
+		<attributes>
+			<attribute name="maven.pomderived" value="true"/>
+			<attribute name="maven.groupId" value="nz.ac.waikato.cms.weka"/>
+			<attribute name="maven.artifactId" value="weka-stable"/>
+			<attribute name="maven.version" value="3.8.3"/>
+			<attribute name="maven.scope" value="compile"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/z3523442/wekafiles/packages/wekaDeeplearning4j/wekaDeeplearning4j-1.5.13.jar" sourcepath="C:/Users/z3523442/Downloads/wekaDeeplearning4j-master.zip"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

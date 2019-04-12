@@ -101,6 +101,7 @@ public class IB1IC_facor_refine_accuracy_for_rare_class extends Classifier imple
 	private double[] m_MaxArray;
 	
 	private IBk_Copy ibkic;
+	private int Knn = 3;
 	
 	private int NumberOfPopulation=5;  //Number of instances(FactorVector in each population)  
 
@@ -296,7 +297,7 @@ public class IB1IC_facor_refine_accuracy_for_rare_class extends Classifier imple
 	      updateMinMax((Instance) enu.nextElement());
 	    }
 	    
-	    ibkic = new  IBk_Copy();
+	    ibkic = new  IBk_Copy(Knn);
 	    
 	    //Instances m_Train1 = new Instances(instances, 0, instances.numInstances());
 	    
