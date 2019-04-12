@@ -1,0 +1,22 @@
+Tester:     weka.experiment.PairedCorrectedTTester
+Analysing:  Percent_correct
+Datasets:   2
+Resultsets: 3
+Confidence: 0.05 (two tailed)
+Sorted by:  -
+Date:       20/2/19, 4:18 pm
+
+
+Dataset                   (1) rules.Ze | (2) lazy. (3) bayes
+------------------------------------------------------------
+iris                       (9)   32.00 |   94.00 v   94.89 v
+DonarTest-weka.filters.un  (9)   50.10 |   63.79 v   63.37 v
+------------------------------------------------------------
+                               (v/ /*) |   (2/0/0)   (2/0/0)
+
+
+Key:
+(1) rules.ZeroR '' 48055541465867954
+(2) lazy.IB1IC_facor_threshold2 '' -6152184127304895851
+(3) bayes.NaiveBayes '' 5995231201785697655
+

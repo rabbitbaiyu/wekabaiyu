@@ -102,9 +102,9 @@ public class IB1IC_facor_threshold2 extends Classifier implements UpdateableClas
 	
 	private IBk_Copy ibkic;
 	
-	private int idnumber=10;
+	private int idnumber=5;  //Number of instances(FactorVector in each population)  
 
-	private int Maxgen=10;
+	private int Maxgen=3;
 	
 	//private double randomfactor;
 	
@@ -1101,18 +1101,18 @@ private double instancecross(double first,double second){
 		 
 		 
 		 
-		 String filepath ="F:/系统备份/weka-src/data/56Data/spilce.arff";
-		 //String filepath ="F:/系统备份/weka-src/data/weather.nominal.arff";
-		 IB1IC_facor_threshold2 ib2 = new IB1IC_facor_threshold2(); 
-		 Instances ins =ib2.getinstance(filepath); 
-		 Instance inc2 = ins.instance(2);
+		 //String filepath ="F:/系统锟斤拷锟斤拷/weka-src/data/56Data/spilce.arff";
+		 //String filepath ="F:/系统锟斤拷锟斤拷/weka-src/data/weather.nominal.arff";
+		 //IB1IC_facor_threshold2 ib2 = new IB1IC_facor_threshold2(); 
+		 //Instances ins =ib2.getinstance(filepath); 
+		 //Instance inc2 = ins.instance(2);
 		 //System.out.println(inc2); 
 		 //Instance inc1 = ins.instance(1);
 		 //System.out.println(inc3); 
 		 // System.out.println(ins);
-		 //System.out.println("----------");
-		 ins.setClassIndex(ins.numAttributes() - 1); 
-		 ib2.buildClassifier(ins); 
+		 //System.out.println("----------");IB1IC_facor_refine_accuracy_for_rare_class.java
+		 //ins.setClassIndex(ins.numAttributes() - 1); 
+		 //ib2.buildClassifier(ins); 
 		 //ib2.distributionForInstance(inc2);
 		 
 		 
